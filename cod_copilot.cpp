@@ -7,7 +7,7 @@
 
 using namespace std;
 
-struct Dado {
+struct Dado { //
     string medida;
     string quantil;
     string area;
