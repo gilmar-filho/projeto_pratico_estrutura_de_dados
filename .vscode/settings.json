@@ -1,0 +1,34 @@
+{
+    "java.project.sourcePaths": ["src"],
+    "java.project.outputPath": "bin",
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar"
+    ],
+    "editor.fontFamily": "JetBrains Mono",
+    "editor.fontSize": 15,
+    "editor.lineHeight": 1.5,
+    //"editor.rulers": [80, 120],
+    "workbench.startupEditor": "newUntitledFile",
+    "editor.renderLineHighlight": "gutter",
+    "editor.fontLigatures": true,
+    "workbench.editor.labelFormat": "short",
+    "explorer.compactFolders": false,
+    "breadcrumbs.enabled": false,
+    "workbench.activityBar.location": "hidden",
+    "editor.minimap.enabled": false,
+    //"editor.scrollbar.vertical": "hidden",
+    //"editor.scrollbar.horizontal": "hidden",
+    "workbench.statusBar.visible": false,
+    "apc.listRow": {
+        "height": 24
+    },
+    "terminal.integrated.fontSize": 15,
+    "terminal.integrated.fontFamily": "JetBrains Mono",
+    "files.associations": {
+        "iostream": "cpp",
+        "new": "cpp",
+        "stdexcept": "cpp",
+        "ostream": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "disabled"
+}
