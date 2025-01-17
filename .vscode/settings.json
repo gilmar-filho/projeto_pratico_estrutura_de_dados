@@ -28,7 +28,9 @@
         "iostream": "cpp",
         "new": "cpp",
         "stdexcept": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "iosfwd": "cpp",
+        "*.tcc": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
