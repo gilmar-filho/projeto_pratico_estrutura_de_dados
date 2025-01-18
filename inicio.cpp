@@ -4,7 +4,7 @@
 using namespace std;
 
 const int tamBloco = 500;
-const string nomeArqBin = "blocos1.bin";
+const string nomeArqBin = "blocos.bin";
 struct Dado {
     char medida[5];
     char quantil[10];
@@ -48,6 +48,11 @@ SequenceSet::SequenceSet(){
 
 SequenceSet::~SequenceSet(){
     if (arqBin.is_open()) arqBin.close();
+    if (remove(nomeArqBin.c_str()) == 0) {
+        cout << "Arquivo binário '" << nomeArqBin << "' foi excluído com sucesso.\n";
+    } else {
+        cout << "Erro ao excluir o arquivo binário '" << nomeArqBin << "'.\n";
+    }
 }
 
 void SequenceSet::adicionarRegistro(Dado &dado){
