@@ -1,3 +1,5 @@
+//Teste de Commit - João Guilherme
+
 #include <iostream>
 #include <fstream>
 #include <cstring>
