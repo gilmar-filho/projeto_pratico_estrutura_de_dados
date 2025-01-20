@@ -201,7 +201,7 @@ void carregarCsv(const string& nomeArqCsv, SequenceSet& ss) {
 int main() {
     SequenceSet ss;
     carregarCsv("Subnational-period-life-tables-2017-2019-CSV.csv", ss);
-    //ss.readAllRecords();
+    ss.readAllRecords();
     ss.saveAllRecordsToTxt("registros.txt"); //Gera um arquivo txt com os registros
     return 0;
 }

@@ -14,7 +14,7 @@
     "workbench.editor.labelFormat": "short",
     "explorer.compactFolders": false,
     "breadcrumbs.enabled": false,
-    "workbench.activityBar.location": "hidden",
+    //"workbench.activityBar.location": "hidden",
     "editor.minimap.enabled": false,
     //"editor.scrollbar.vertical": "hidden",
     //"editor.scrollbar.horizontal": "hidden",

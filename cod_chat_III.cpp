@@ -217,12 +217,65 @@ Dado *SequenceSet::buscarDado(const string &chave) {
     return nullptr;
 }
 
+void carregarCsv(const string& nomeArqCsv, SequenceSet& ss) {
+    ifstream arqCsv(nomeArqCsv);
+    if (!arqCsv.is_open()) {
+        cout << "Erro ao abrir o arquivo " << nomeArqCsv << endl;
+        return;
+    }
+
+    string linha;
+
+    // Ignorar a primeira linha (cabeçalho)
+    if (getline(arqCsv, linha)) {
+        cout << "Cabeçalho ignorado: " << linha << endl;
+    }
+
+    while (getline(arqCsv, linha)) {
+        Dado dado = {};
+        size_t pos = 0;
+        int campo = 0;
+
+        while ((pos = linha.find(',')) != string::npos) {
+            string valor = linha.substr(0, pos);
+            linha.erase(0, pos + 1);
+
+            switch (campo++) {
+                case 0: strncpy(dado.medida, valor.c_str(), sizeof(dado.medida) - 1); break;
+                case 1: strncpy(dado.quantil, valor.c_str(), sizeof(dado.quantil) - 1); break;
+                case 2: strncpy(dado.area, valor.c_str(), sizeof(dado.area) - 1); break;
+                case 3: strncpy(dado.sex, valor.c_str(), sizeof(dado.sex) - 1); break;
+                case 4: strncpy(dado.idade, valor.c_str(), sizeof(dado.idade) - 1); break;
+                case 5: strncpy(dado.regiao, valor.c_str(), sizeof(dado.regiao) - 1); break;
+                case 6: strncpy(dado.etnia, valor.c_str(), sizeof(dado.etnia) - 1); break;
+            }
+        }
+
+        if (!linha.empty()) {
+            try {
+                dado.valor = std::stod(linha);
+            } catch (const std::invalid_argument&) {
+                cout << "Erro: valor inválido no campo 'value': " << linha << endl;
+                continue;
+            }
+        } else {
+            cout << "Erro: campo 'value' vazio." << endl;
+            continue;
+        }
+
+        ss.adicionarRegistroOrdenado(dado);
+    }
+
+    arqCsv.close();
+}
+
 int main() {
     SequenceSet ss;
 
     // Exemplos de uso
-    //ss.readAllRecords();
-    //ss.saveAllRecordsToTxt("registros.txt");
+    carregarCsv("Subnational-period-life-tables-2017-2019-CSV.csv", ss);
+    ss.readAllRecords();
+    ss.saveAllRecordsToTxt("registros.txt");
 
     Dado novoDado = {"M01", "Q1", "Area X", "Masculino", "20-30", "Região Y", "Branco", 42.5};
     ss.adicionarRegistroOrdenado(novoDado);
@@ -235,8 +288,8 @@ int main() {
         cout << "Dado não encontrado.\n";
     }
 
-    ss.readAllRecords();
-    ss.saveAllRecordsToTxt("registros.txt");
+    //ss.readAllRecords();
+    //ss.saveAllRecordsToTxt("registros.txt");
 
     return 0;
 }
