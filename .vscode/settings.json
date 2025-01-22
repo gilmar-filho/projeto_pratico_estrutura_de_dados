@@ -5,7 +5,7 @@
         "lib/**/*.jar"
     ],
     "editor.fontFamily": "JetBrains Mono",
-    "editor.fontSize": 15,
+    "editor.fontSize": 16,
     "editor.lineHeight": 1.5,
     //"editor.rulers": [80, 120],
     "workbench.startupEditor": "newUntitledFile",
@@ -22,7 +22,7 @@
     "apc.listRow": {
         "height": 24
     },
-    "terminal.integrated.fontSize": 15,
+    "terminal.integrated.fontSize": 16,
     "terminal.integrated.fontFamily": "JetBrains Mono",
     "files.associations": {
         "iostream": "cpp",
