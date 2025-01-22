@@ -129,26 +129,52 @@ void SequenceSet::adicionarRegistro(Dado &dado) {
 
 void SequenceSet::inserirViaEntradaPadrao() {
     Dado dado;
-    cout << "Inserir novo registro:\n";
+    string entrada;
+
+    cout << "Adicionar novo registro:\n";
+    cin.ignore();
+
     cout << "Medida: ";
-    cin >> setw(sizeof(dado.medida)) >> dado.medida;
+    getline(cin, entrada);
+    strncpy(dado.medida, entrada.c_str(), sizeof(dado.medida) - 1);
+    dado.medida[sizeof(dado.medida) - 1] = '\0';
+
     cout << "Quantil: ";
-    cin >> setw(sizeof(dado.quantil)) >> dado.quantil;
+    getline(cin, entrada);
+    strncpy(dado.quantil, entrada.c_str(), sizeof(dado.quantil) - 1);
+    dado.quantil[sizeof(dado.quantil) - 1] = '\0';
+
     cout << "Área: ";
-    cin >> setw(sizeof(dado.area)) >> dado.area;
+    getline(cin, entrada);
+    strncpy(dado.area, entrada.c_str(), sizeof(dado.area) - 1);
+    dado.area[sizeof(dado.area) - 1] = '\0';
+
     cout << "Sexo: ";
-    cin >> setw(sizeof(dado.sex)) >> dado.sex;
+    getline(cin, entrada);
+    strncpy(dado.sex, entrada.c_str(), sizeof(dado.sex) - 1);
+    dado.sex[sizeof(dado.sex) - 1] = '\0';
+
     cout << "Idade: ";
-    cin >> setw(sizeof(dado.idade)) >> dado.idade;
+    getline(cin, entrada);
+    strncpy(dado.idade, entrada.c_str(), sizeof(dado.idade) - 1);
+    dado.idade[sizeof(dado.idade) - 1] = '\0';
+
     cout << "Região: ";
-    cin >> setw(sizeof(dado.regiao)) >> dado.regiao;
+    getline(cin, entrada);
+    strncpy(dado.regiao, entrada.c_str(), sizeof(dado.regiao) - 1);
+    dado.regiao[sizeof(dado.regiao) - 1] = '\0';
+
     cout << "Etnia: ";
-    cin >> setw(sizeof(dado.etnia)) >> dado.etnia;
+    getline(cin, entrada);
+    strncpy(dado.etnia, entrada.c_str(), sizeof(dado.etnia) - 1);
+    dado.etnia[sizeof(dado.etnia) - 1] = '\0';
+
     cout << "Valor: ";
-    cin >> dado.valor;
+    getline(cin, entrada);
+    dado.valor = stof(entrada);
 
     adicionarRegistro(dado);
-    cout << "Registro inserido com sucesso!\n";
+    cout << "Registro adicionado com sucesso!\n";
 }
 
 void SequenceSet::inserirViaArquivoTexto(const string &nomeArqTxt) {
