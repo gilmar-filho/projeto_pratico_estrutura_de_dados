@@ -34,7 +34,7 @@ public:
     void inserirViaEntradaPadrao();
     void inserirViaArquivoTexto(const string &nomeArqTxt);
     void removerRegistro(const string &chaveMedida);
-    void buscarRegistro(const string &chaveMedida);
+    void buscarRegistro(const string &chaveMedida, const string &chaveIdade);
     void readAllRecords();
     void saveAllRecordsToTxt(const string& nomeArqTxt);
 };
@@ -125,24 +125,6 @@ void SequenceSet::inserirViaEntradaPadrao() {
     cout << "Registro inserido com sucesso!\n";
 }
 
-/*void SequenceSet::inserirViaArquivoTexto(const string &nomeArqTxt) {
-    ifstream arqTxt(nomeArqTxt);
-    if (!arqTxt.is_open()) {
-        cout << "Erro ao abrir o arquivo " << nomeArqTxt << endl;
-        return;
-    }
-
-    string linha;
-    while (getline(arqTxt, linha)) {
-        Dado dado = {};
-        sscanf(linha.c_str(), "%4s %9s %49s %19s %19s %74s %24s %lf",
-               dado.medida, dado.quantil, dado.area, dado.sex,
-               dado.idade, dado.regiao, dado.etnia, &dado.valor);
-        adicionarRegistro(dado);
-    }
-    cout << "Registros do arquivo inseridos com sucesso!\n";
-}*/
-
 void SequenceSet::removerRegistro(const string &chaveMedida) {
     Bloco bloco;
     arqBin.seekg(0, ios::beg);
@@ -171,13 +153,15 @@ void SequenceSet::removerRegistro(const string &chaveMedida) {
     }
 }
 
-void SequenceSet::buscarRegistro(const string &chaveMedida) {
+void SequenceSet::buscarRegistro(const string &chaveMedida, const string &chaveIdade) {
     Bloco bloco;
     arqBin.seekg(0, ios::beg);
+    bool termina = false;
+    int cont = 0;
 
-    while (arqBin.read(reinterpret_cast<char *>(&bloco), sizeof(Bloco))) {
+    while (arqBin.read(reinterpret_cast<char *>(&bloco), sizeof(Bloco)) and !termina) {
         for (int i = 0; i < bloco.numDados; i++) {
-            if (strcmp(bloco.dados[i].medida, chaveMedida.c_str()) == 0) {
+            if ((strcmp(bloco.dados[i].medida, chaveMedida.c_str()) == 0) and (strcmp(bloco.dados[i].idade, chaveIdade.c_str()) == 0)) {
                 cout << "Registro encontrado:\n";
                 cout << "  Medida: " << bloco.dados[i].medida
                      << ", Quantil: " << bloco.dados[i].quantil
@@ -187,13 +171,14 @@ void SequenceSet::buscarRegistro(const string &chaveMedida) {
                      << ", Região: " << bloco.dados[i].regiao
                      << ", Etnia: " << bloco.dados[i].etnia
                      << ", Valor: " << bloco.dados[i].valor << "\n";
-                return;
+                //return;
+                cont++;
             }
+
         }
-        if (bloco.proxBloco == -1)
-            break;
+        if (bloco.proxBloco == -1) termina = true;
     }
-    cout << "Registro não encontrado.\n";
+    cout << cont << " registros encontrados\n";
 }
 
 void SequenceSet::readAllRecords() {
@@ -326,10 +311,13 @@ int main() {
             break;
         }
         case 4: {
-            string chaveMedida;
+            string chaveMedida, chaveIdade;
             cout << "Informe a medida para buscar: ";
             cin >> chaveMedida;
-            ss.buscarRegistro(chaveMedida);
+            cin.ignore();
+            cout << "Informe a idade para buscar: ";
+            getline(cin, chaveIdade);
+            ss.buscarRegistro(chaveMedida, chaveIdade);
             break;
         }
         case 5:
