@@ -30,11 +30,12 @@ private:
 public:
     SequenceSet();
     ~SequenceSet();
-    void adicionarRegistro(Dado &dado);
+    //void adicionarRegistro(Dado &dado);
+    void adicionarRegistro(Dado &dado, bool teste);
     void inserirViaEntradaPadrao();
     void inserirViaArquivoTexto(const string &nomeArqTxt);
-    void removerRegistro(const string &chaveMedida);
-    void buscarRegistro(const string &chaveMedida, const string &chaveIdade);
+    void removerRegistro(const string &chaveMedida, const double chaveValor);
+    void buscarRegistro(const string &chaveMedida, const double &chaveIdade);
     void readAllRecords();
     void saveAllRecordsToTxt(const string& nomeArqTxt);
 };
@@ -61,7 +62,7 @@ SequenceSet::~SequenceSet() {
     }
 }
 
-void SequenceSet::adicionarRegistro(Dado &dado) {
+/*void SequenceSet::adicionarRegistro(Dado &dado) {
     Bloco blocoAtual;
     int posAtual = 0;
 
@@ -98,6 +99,82 @@ void SequenceSet::adicionarRegistro(Dado &dado) {
         arqBin.seekp((posAtual + 1) * sizeof(Bloco), ios::beg);
         arqBin.write(reinterpret_cast<char *>(&novoBloco), sizeof(Bloco));
     }
+}*/
+
+void SequenceSet::adicionarRegistro(Dado &dado, bool teste) {
+    Bloco blocoAtual;
+    int posAtual = 0;
+
+    if (teste){
+        arqBin.seekg(0, ios::beg);
+        while (arqBin.read(reinterpret_cast<char *>(&blocoAtual), sizeof(Bloco))) {
+            if (blocoAtual.numDados < tamBloco) {
+                blocoAtual.dados[blocoAtual.numDados] = dado;
+                blocoAtual.numDados++;
+
+                arqBin.seekp(posAtual * sizeof(Bloco), ios::beg);
+                arqBin.write(reinterpret_cast<char *>(&blocoAtual), sizeof(Bloco));
+                return;
+            }
+            posAtual++;
+            if (blocoAtual.proxBloco == -1)
+                break;
+        }
+
+        // Se não encontrou espaço em blocos intermediários, adiciona ao final
+        Bloco novoBloco;
+        novoBloco.numDados = 0;
+        novoBloco.proxBloco = -1;
+
+        novoBloco.dados[novoBloco.numDados] = dado;
+        novoBloco.numDados++;
+
+        if (posAtual == 0 && arqBin.tellg() == 0) {
+            posAtual = 0;
+        } else {
+            blocoAtual.proxBloco = posAtual + 1;
+            arqBin.seekp((posAtual - 1) * sizeof(Bloco), ios::beg);
+            arqBin.write(reinterpret_cast<char *>(&blocoAtual), sizeof(Bloco));
+            posAtual++;
+        }
+
+        arqBin.seekp(posAtual * sizeof(Bloco), ios::beg);
+        arqBin.write(reinterpret_cast<char *>(&novoBloco), sizeof(Bloco));
+    } else {
+        arqBin.seekg(0, ios::end);
+        int tamArq = arqBin.tellg();
+        if (tamArq == 0) {
+            blocoAtual.numDados = 0;
+            blocoAtual.proxBloco = -1;
+        } else {
+            posAtual = (tamArq / sizeof(Bloco)) - 1;
+            arqBin.seekg(posAtual * sizeof(Bloco), ios::beg);
+            arqBin.read(reinterpret_cast<char *>(&blocoAtual), sizeof(Bloco));
+        }
+
+        if (blocoAtual.numDados < tamBloco) {
+            blocoAtual.dados[blocoAtual.numDados] = dado;
+            blocoAtual.numDados++;
+
+            arqBin.seekp(posAtual * sizeof(Bloco), ios::beg);
+            arqBin.write(reinterpret_cast<char *>(&blocoAtual), sizeof(Bloco));
+        } else {
+            Bloco novoBloco;
+            novoBloco.numDados = 0;
+            novoBloco.proxBloco = -1;
+
+            novoBloco.dados[novoBloco.numDados] = dado;
+            novoBloco.numDados++;
+
+            blocoAtual.proxBloco = posAtual + 1;
+
+            arqBin.seekp(posAtual * sizeof(Bloco), ios::beg);
+            arqBin.write(reinterpret_cast<char *>(&blocoAtual), sizeof(Bloco));
+
+            arqBin.seekp((posAtual + 1) * sizeof(Bloco), ios::beg);
+            arqBin.write(reinterpret_cast<char *>(&novoBloco), sizeof(Bloco));
+        }
+    }
 }
 
 void SequenceSet::inserirViaEntradaPadrao() {
@@ -105,34 +182,42 @@ void SequenceSet::inserirViaEntradaPadrao() {
     Dado dado;
     cout << "Inserir novo registro:\n";
     cout << "Medida: ";
+    //cin.ignore();
     cin.getline(dado.medida, sizeof(dado.medida));
     cout << "Quantil: ";
+    //cin.ignore();
     cin.getline(dado.quantil, sizeof(dado.quantil));
     cout << "Área: ";
+    //cin.ignore();
     cin.getline(dado.area, sizeof(dado.area));
     cout << "Sexo: ";
+    //cin.ignore();
     cin.getline(dado.sex, sizeof(dado.sex));
     cout << "Idade: ";
+    //cin.ignore();
     cin.getline(dado.idade, sizeof(dado.idade));
     cout << "Região: ";
+    //cin.ignore();
     cin.getline(dado.regiao, sizeof(dado.regiao));
     cout << "Etnia: ";
+    //cin.ignore();
     cin.getline(dado.etnia, sizeof(dado.etnia));
     cout << "Valor: ";
+    //cin.ignore();
     cin >> dado.valor;
 
-    adicionarRegistro(dado);
+    adicionarRegistro(dado, true);
     cout << "Registro inserido com sucesso!\n";
 }
 
-void SequenceSet::removerRegistro(const string &chaveMedida) {
+void SequenceSet::removerRegistro(const string &chaveMedida, const double chaveValor) {
     Bloco bloco;
     arqBin.seekg(0, ios::beg);
     bool encontrado = false;
 
     while (arqBin.read(reinterpret_cast<char *>(&bloco), sizeof(Bloco))) {
         for (int i = 0; i < bloco.numDados; i++) {
-            if (strcmp(bloco.dados[i].medida, chaveMedida.c_str()) == 0) {
+            if ((strcmp(bloco.dados[i].medida, chaveMedida.c_str()) == 0) and (bloco.dados[i].valor == chaveValor)) {
                 encontrado = true;
                 for (int j = i; j < bloco.numDados - 1; j++) {
                     bloco.dados[j] = bloco.dados[j + 1];
@@ -153,7 +238,47 @@ void SequenceSet::removerRegistro(const string &chaveMedida) {
     }
 }
 
-void SequenceSet::buscarRegistro(const string &chaveMedida, const string &chaveIdade) {
+/*void SequenceSet::removerRegistro(const string &chaveMedida, const double chaveValor) {
+    Bloco bloco, blocoAnterior;
+    arqBin.seekg(0, ios::beg);
+    bool encontrado = false;
+    int posAtual = 0, posAnterior = -1;
+
+    while (arqBin.read(reinterpret_cast<char *>(&bloco), sizeof(Bloco))) {
+        for (int i = 0; i < bloco.numDados; i++) {
+            if ((strcmp(bloco.dados[i].medida, chaveMedida.c_str()) == 0) and (bloco.dados[i].valor == chaveValor)) {
+                encontrado = true;
+                for (int j = i; j < bloco.numDados - 1; j++) {
+                    bloco.dados[j] = bloco.dados[j + 1];
+                }
+                bloco.numDados--;
+
+                if (bloco.numDados == 0 && posAnterior != -1) {
+                    blocoAnterior.proxBloco = bloco.proxBloco;
+                    arqBin.seekp(posAnterior * sizeof(Bloco), ios::beg);
+                    arqBin.write(reinterpret_cast<char *>(&blocoAnterior), sizeof(Bloco));
+                } else {
+                    arqBin.seekp(posAtual * sizeof(Bloco), ios::beg);
+                    arqBin.write(reinterpret_cast<char *>(&bloco), sizeof(Bloco));
+                }
+
+                cout << "Registro removido com sucesso!\n";
+                return;
+            }
+        }
+        posAnterior = posAtual;
+        blocoAnterior = bloco;
+        posAtual++;
+        if (bloco.proxBloco == -1)
+            break;
+    }
+
+    if (!encontrado) {
+        cout << "Registro não encontrado.\n";
+    }
+}*/
+
+void SequenceSet::buscarRegistro(const string &chaveMedida, const double &chaveIdade) {
     Bloco bloco;
     arqBin.seekg(0, ios::beg);
     bool termina = false;
@@ -162,6 +287,7 @@ void SequenceSet::buscarRegistro(const string &chaveMedida, const string &chaveI
     while (arqBin.read(reinterpret_cast<char *>(&bloco), sizeof(Bloco)) and !termina) {
         for (int i = 0; i < bloco.numDados; i++) {
             if ((strcmp(bloco.dados[i].medida, chaveMedida.c_str()) == 0) and (strcmp(bloco.dados[i].idade, chaveIdade.c_str()) == 0)) {
+            /*if ((strcmp(bloco.dados[i].medida, chaveMedida.c_str()) == 0) and (bloco.dados[i].valor == chaveIdade)) {*/
                 cout << "Registro encontrado:\n";
                 cout << "  Medida: " << bloco.dados[i].medida
                      << ", Quantil: " << bloco.dados[i].quantil
@@ -271,7 +397,10 @@ void carregarArquivo(const string& nomeArqCsv, SequenceSet& ss, bool txtOrCsv) {
             continue;
         }
 
-        ss.adicionarRegistro(dado);
+        if (txtOrCsv)
+            ss.adicionarRegistro(dado, true);
+        else
+            ss.adicionarRegistro(dado, false);
     }
 
     arqCsv.close();
@@ -304,19 +433,24 @@ int main() {
             break;
         }
         case 3: {
-            string chaveMedida;
+            string chaveMedida; 
+            double chaveValor;
             cout << "Informe a medida para remover: ";
             cin >> chaveMedida;
-            ss.removerRegistro(chaveMedida);
+            cout << "Informe o valor para remover: ";
+            cin >> chaveValor;
+            ss.removerRegistro(chaveMedida, chaveValor);
             break;
         }
         case 4: {
-            string chaveMedida, chaveIdade;
+            string chaveMedida;
+            double chaveIdade;
             cout << "Informe a medida para buscar: ";
             cin >> chaveMedida;
             cin.ignore();
             cout << "Informe a idade para buscar: ";
-            getline(cin, chaveIdade);
+            //getline(cin, chaveIdade);
+            cin >> chaveIdade;
             ss.buscarRegistro(chaveMedida, chaveIdade);
             break;
         }
@@ -324,7 +458,7 @@ int main() {
             ss.readAllRecords();
             break;
         case 0:
-            ss.saveAllRecordsToTxt("registros.txt");
+            ss.saveAllRecordsToTxt("registros1.txt");
             cout << "Saindo...\n";
             break;
         default:
