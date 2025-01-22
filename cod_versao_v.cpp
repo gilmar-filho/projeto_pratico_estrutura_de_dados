@@ -35,7 +35,7 @@ public:
     void inserirViaEntradaPadrao();
     void inserirViaArquivoTexto(const string &nomeArqTxt);
     void removerRegistro(const string &chaveMedida, const double chaveValor);
-    void buscarRegistro(const string &chaveMedida, const double &chaveIdade);
+    void buscarRegistro(const string &chaveMedida, const string &chaveIdade);
     void readAllRecords();
     void saveAllRecordsToTxt(const string& nomeArqTxt);
 };
@@ -278,7 +278,7 @@ void SequenceSet::removerRegistro(const string &chaveMedida, const double chaveV
     }
 }*/
 
-void SequenceSet::buscarRegistro(const string &chaveMedida, const double &chaveIdade) {
+void SequenceSet::buscarRegistro(const string &chaveMedida, const string &chaveIdade) {
     Bloco bloco;
     arqBin.seekg(0, ios::beg);
     bool termina = false;
@@ -443,14 +443,14 @@ int main() {
             break;
         }
         case 4: {
-            string chaveMedida;
-            double chaveIdade;
+            string chaveMedida, chaveIdade;
+            //double chaveIdade;
             cout << "Informe a medida para buscar: ";
             cin >> chaveMedida;
             cin.ignore();
             cout << "Informe a idade para buscar: ";
-            //getline(cin, chaveIdade);
-            cin >> chaveIdade;
+            getline(cin, chaveIdade);
+            //cin >> chaveIdade;
             ss.buscarRegistro(chaveMedida, chaveIdade);
             break;
         }
