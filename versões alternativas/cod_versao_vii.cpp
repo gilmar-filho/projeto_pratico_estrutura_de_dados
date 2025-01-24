@@ -44,7 +44,7 @@ public:
     void removerRegistro(const string &chaveMedida, double chaveValor);
 };
 
-SequenceSet::SequenceSet() : numBlocos(-1), priBloco(-1), disBloco(0), contBloco(0) {
+SequenceSet::SequenceSet() : numBlocos(0), priBloco(-1), disBloco(0), contBloco(0) {
     criarPastaBlocos();
 }
 
@@ -94,17 +94,43 @@ void SequenceSet::adicionarRegistro(const Dado &dado) {
         blocoArq.seekp(sizeof(CabecalhoBloco) + cabecalho.numDados * sizeof(Dado), ios::beg);
         blocoArq.write(reinterpret_cast<const char*>(&dado), sizeof(Dado));
         cabecalho.numDados++;
+        cout << "numDados " << cabecalho.numDados << endl;
         blocoArq.seekp(0, ios::beg);
         blocoArq.write(reinterpret_cast<char*>(&cabecalho), sizeof(CabecalhoBloco));
     } else {
         // Atualiza o cabeçalho para apontar para um novo bloco
         int novoBloco = disBloco + 1;
-        criarNovoBloco(novoBloco);
-        cabecalho.proxBloco = novoBloco;
-        blocoArq.seekp(0, ios::beg);
-        blocoArq.write(reinterpret_cast<char*>(&cabecalho), sizeof(CabecalhoBloco));
-        disBloco = novoBloco;
-        adicionarRegistro(dado); // Adiciona o registro ao novo bloco
+        if (novoBloco >= numBlocos) {
+            cout << "entrou para criação de novo bloco" << endl;
+            criarNovoBloco(novoBloco);
+            cabecalho.proxBloco = novoBloco;
+            blocoArq.seekp(0, ios::beg);
+            blocoArq.write(reinterpret_cast<char*>(&cabecalho), sizeof(CabecalhoBloco));
+            disBloco = novoBloco;
+            adicionarRegistro(dado); // Adiciona o registro ao novo bloco
+        } else {
+            bool encontrou = false;
+            int i = 0;
+            while (i < numBlocos and !encontrou){
+                string nomeBloco = PASTA_BLOCOS + "/" + BASE_NOME_ARQ_BIN + to_string(i) + ".bin";
+                fstream blocoArq(nomeBloco, ios::in | ios::out | ios::binary);
+                if (!blocoArq.is_open()) {
+                    throw runtime_error("Erro ao abrir o arquivo do bloco: " + nomeBloco);
+                }
+
+                CabecalhoBloco cabecalho;
+                blocoArq.read(reinterpret_cast<char*>(&cabecalho), sizeof(CabecalhoBloco));
+
+                if (cabecalho.numDados < TAM_BLOCO) {
+                    cout << "achou " << i << endl;
+                    disBloco = i;
+                    encontrou = true;
+                }
+                i++;
+            }
+            Dado auxDado = dado;
+            adicionarRegistro(auxDado);
+        }
     }
 
     blocoArq.close();
@@ -241,6 +267,7 @@ void SequenceSet::removerRegistro(const string &chaveMedida, double chaveValor) 
 
                 // Atualiza o cabeçalho do bloco
                 cabecalho.numDados--;
+                //cout << "numDados " << cabecalho.numDados << endl;
                 blocoArq.seekp(0, ios::beg);
                 blocoArq.write(reinterpret_cast<char*>(&cabecalho), sizeof(CabecalhoBloco));
 
