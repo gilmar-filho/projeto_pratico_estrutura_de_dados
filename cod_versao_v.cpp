@@ -2,10 +2,11 @@
 #include <fstream>
 #include <cstring>
 #include <iomanip>
+#include "sequence_set.h"
 using namespace std;
 
-const int tamBloco = 500;
-const string nomeArqBin = "blocos.bin";
+/*const int TAM_BLOCO = 500;
+const string ARQ_BIN = "blocos.bin";
 
 struct Dado {
     char medida[5];
@@ -19,7 +20,7 @@ struct Dado {
 };
 
 struct Bloco {
-    Dado dados[tamBloco];
+    Dado dados[TAM_BLOCO];
     int numDados;
     int proxBloco;
 };
@@ -37,78 +38,49 @@ public:
     void removerRegistro(const string &chaveMedida, const double chaveValor);
     void buscarRegistro(const string &chaveMedida, const string &chaveIdade);
     void readAllRecords();
-    void saveAllRecordsToTxt(const string& nomeArqTxt);
-};
+    void salvarDadosEmTxt(const string& nomeArqTxt);
+};*/
 
+//Construtor do Sequence Set
 SequenceSet::SequenceSet() {
-    arqBin.open(nomeArqBin, ios::in | ios::out | ios::binary);
+    //Abre o arquivo binário
+    arqBin.open(ARQ_BIN, ios::in | ios::out | ios::binary);
+    //Caso o arquivo binário não exista, cria o primeiro bloco e inicializa o arquivo
     if (!arqBin.is_open()) {
         Bloco bloco;
         bloco.numDados = 0;
         bloco.proxBloco = -1;
-        arqBin.open(nomeArqBin, ios::out | ios::binary);
+
+        arqBin.open(ARQ_BIN, ios::out | ios::binary);
         arqBin.write(reinterpret_cast<char *>(&bloco), sizeof(Bloco));
         arqBin.close();
-        arqBin.open(nomeArqBin, ios::in | ios::out | ios::binary);
+        arqBin.open(ARQ_BIN, ios::in | ios::out | ios::binary);
     }
 }
 
+//Destrutor do Sequence Set
 SequenceSet::~SequenceSet() {
     if (arqBin.is_open()) arqBin.close();
-    if (remove(nomeArqBin.c_str()) == 0) {
-        cout << "Arquivo binário '" << nomeArqBin << "' foi excluído com sucesso.\n";
+    //Remove o arquivo binário criado
+    if (remove(ARQ_BIN.c_str()) == 0) {
+        cout << "Arquivo binário '" << ARQ_BIN << "' foi excluído com sucesso.\n";
     } else {
-        cout << "Erro ao excluir o arquivo binário '" << nomeArqBin << "'.\n";
+        cout << "Erro ao excluir o arquivo binário '" << ARQ_BIN << "'.\n";
     }
 }
 
-/*void SequenceSet::adicionarRegistro(Dado &dado) {
-    Bloco blocoAtual;
-    int posAtual = 0;
-
-    arqBin.seekg(0, ios::end);
-    int tamArq = arqBin.tellg();
-    if (tamArq == 0) {
-        blocoAtual.numDados = 0;
-        blocoAtual.proxBloco = -1;
-    } else {
-        posAtual = (tamArq / sizeof(Bloco)) - 1;
-        arqBin.seekg(posAtual * sizeof(Bloco), ios::beg);
-        arqBin.read(reinterpret_cast<char *>(&blocoAtual), sizeof(Bloco));
-    }
-
-    if (blocoAtual.numDados < tamBloco) {
-        blocoAtual.dados[blocoAtual.numDados] = dado;
-        blocoAtual.numDados++;
-
-        arqBin.seekp(posAtual * sizeof(Bloco), ios::beg);
-        arqBin.write(reinterpret_cast<char *>(&blocoAtual), sizeof(Bloco));
-    } else {
-        Bloco novoBloco;
-        novoBloco.numDados = 0;
-        novoBloco.proxBloco = -1;
-
-        novoBloco.dados[novoBloco.numDados] = dado;
-        novoBloco.numDados++;
-
-        blocoAtual.proxBloco = posAtual + 1;
-
-        arqBin.seekp(posAtual * sizeof(Bloco), ios::beg);
-        arqBin.write(reinterpret_cast<char *>(&blocoAtual), sizeof(Bloco));
-
-        arqBin.seekp((posAtual + 1) * sizeof(Bloco), ios::beg);
-        arqBin.write(reinterpret_cast<char *>(&novoBloco), sizeof(Bloco));
-    }
-}*/
-
+//Método para adicionar um registro ao arquivo binário
 void SequenceSet::adicionarRegistro(Dado &dado, bool teste) {
     Bloco blocoAtual;
     int posAtual = 0;
 
+    //A variável 'teste' verifica se está lendo o arquivo .csv ou se está inserindo um novo arquivo
     if (teste){
+        //Caso esteja inserindo um novo arquivo, verifica se há espaço em blocos intermediários
         arqBin.seekg(0, ios::beg);
         while (arqBin.read(reinterpret_cast<char *>(&blocoAtual), sizeof(Bloco))) {
-            if (blocoAtual.numDados < tamBloco) {
+            //Caso houver espaço, insere o registro no bloco
+            if (blocoAtual.numDados < TAM_BLOCO) {
                 blocoAtual.dados[blocoAtual.numDados] = dado;
                 blocoAtual.numDados++;
 
@@ -140,6 +112,7 @@ void SequenceSet::adicionarRegistro(Dado &dado, bool teste) {
 
         arqBin.seekp(posAtual * sizeof(Bloco), ios::beg);
         arqBin.write(reinterpret_cast<char *>(&novoBloco), sizeof(Bloco));
+    //Caso esteja lendo um arquivo .csv ou .txt, insere o registro no final
     } else {
         arqBin.seekg(0, ios::end);
         int tamArq = arqBin.tellg();
@@ -152,7 +125,7 @@ void SequenceSet::adicionarRegistro(Dado &dado, bool teste) {
             arqBin.read(reinterpret_cast<char *>(&blocoAtual), sizeof(Bloco));
         }
 
-        if (blocoAtual.numDados < tamBloco) {
+        if (blocoAtual.numDados < TAM_BLOCO) {
             blocoAtual.dados[blocoAtual.numDados] = dado;
             blocoAtual.numDados++;
 
@@ -177,39 +150,33 @@ void SequenceSet::adicionarRegistro(Dado &dado, bool teste) {
     }
 }
 
+//Método para inserir um registro via entrada padrão
 void SequenceSet::inserirViaEntradaPadrao() {
     cin.ignore();
     Dado dado;
     cout << "Inserir novo registro:\n";
     cout << "Medida: ";
-    //cin.ignore();
     cin.getline(dado.medida, sizeof(dado.medida));
     cout << "Quantil: ";
-    //cin.ignore();
     cin.getline(dado.quantil, sizeof(dado.quantil));
     cout << "Área: ";
-    //cin.ignore();
     cin.getline(dado.area, sizeof(dado.area));
     cout << "Sexo: ";
-    //cin.ignore();
     cin.getline(dado.sex, sizeof(dado.sex));
     cout << "Idade: ";
-    //cin.ignore();
     cin.getline(dado.idade, sizeof(dado.idade));
     cout << "Região: ";
-    //cin.ignore();
     cin.getline(dado.regiao, sizeof(dado.regiao));
     cout << "Etnia: ";
-    //cin.ignore();
     cin.getline(dado.etnia, sizeof(dado.etnia));
     cout << "Valor: ";
-    //cin.ignore();
     cin >> dado.valor;
 
     adicionarRegistro(dado, true);
     cout << "Registro inserido com sucesso!\n";
 }
 
+//Método para remover um registro por meio de uma chave e um valor
 void SequenceSet::removerRegistro(const string &chaveMedida, const double chaveValor) {
     Bloco bloco;
     arqBin.seekg(0, ios::beg);
@@ -238,52 +205,15 @@ void SequenceSet::removerRegistro(const string &chaveMedida, const double chaveV
     }
 }
 
-/*void SequenceSet::removerRegistro(const string &chaveMedida, const double chaveValor) {
-    Bloco bloco, blocoAnterior;
-    arqBin.seekg(0, ios::beg);
-    bool encontrado = false;
-    int posAtual = 0, posAnterior = -1;
-
-    while (arqBin.read(reinterpret_cast<char *>(&bloco), sizeof(Bloco))) {
-        for (int i = 0; i < bloco.numDados; i++) {
-            if ((strcmp(bloco.dados[i].medida, chaveMedida.c_str()) == 0) and (bloco.dados[i].valor == chaveValor)) {
-                encontrado = true;
-                for (int j = i; j < bloco.numDados - 1; j++) {
-                    bloco.dados[j] = bloco.dados[j + 1];
-                }
-                bloco.numDados--;
-
-                if (bloco.numDados == 0 && posAnterior != -1) {
-                    blocoAnterior.proxBloco = bloco.proxBloco;
-                    arqBin.seekp(posAnterior * sizeof(Bloco), ios::beg);
-                    arqBin.write(reinterpret_cast<char *>(&blocoAnterior), sizeof(Bloco));
-                } else {
-                    arqBin.seekp(posAtual * sizeof(Bloco), ios::beg);
-                    arqBin.write(reinterpret_cast<char *>(&bloco), sizeof(Bloco));
-                }
-
-                cout << "Registro removido com sucesso!\n";
-                return;
-            }
-        }
-        posAnterior = posAtual;
-        blocoAnterior = bloco;
-        posAtual++;
-        if (bloco.proxBloco == -1)
-            break;
-    }
-
-    if (!encontrado) {
-        cout << "Registro não encontrado.\n";
-    }
-}*/
-
+//Método para buscar os registros por meio de uma chave e uma faixa etária 
 void SequenceSet::buscarRegistro(const string &chaveMedida, const string &chaveIdade) {
     Bloco bloco;
     arqBin.seekg(0, ios::beg);
     bool termina = false;
+    //bool encontrado = false;
     int cont = 0;
 
+    //Exibe todas as informações dos registros encontrados
     while (arqBin.read(reinterpret_cast<char *>(&bloco), sizeof(Bloco)) and !termina) {
         for (int i = 0; i < bloco.numDados; i++) {
             if ((strcmp(bloco.dados[i].medida, chaveMedida.c_str()) == 0) and (strcmp(bloco.dados[i].idade, chaveIdade.c_str()) == 0)) {
@@ -304,25 +234,15 @@ void SequenceSet::buscarRegistro(const string &chaveMedida, const string &chaveI
         }
         if (bloco.proxBloco == -1) termina = true;
     }
-    cout << cont << " registros encontrados\n";
-}
-
-void SequenceSet::readAllRecords() {
-    Bloco bloco;
-    arqBin.seekg(0, ios::beg);
-
-    while (arqBin.read(reinterpret_cast<char *>(&bloco), sizeof(Bloco))) {
-        for (int i = 0; i < bloco.numDados; i++) {
-            cout << "  Medida: " << bloco.dados[i].medida
-                 << ", Quantil: " << bloco.dados[i].quantil
-                 << ", Valor: " << bloco.dados[i].valor << "\n";
-        }
-        if (bloco.proxBloco == -1)
-            break;
+    if (cont > 0){
+        cout << cont << " registros encontrados\n";
+    } else {
+        cout << "Registro não encontrado.\n";
     }
 }
 
-void SequenceSet::saveAllRecordsToTxt(const string& nomeArqTxt) {
+//Método para salvar todos os registros em um arquivo .txt
+void SequenceSet::salvarDadosEmTxt(const string& nomeArqTxt) {
     ofstream arqTxt(nomeArqTxt);
         if (!arqTxt.is_open()) {
             cout << "Erro ao criar o arquivo " << nomeArqTxt << endl;
@@ -333,7 +253,8 @@ void SequenceSet::saveAllRecordsToTxt(const string& nomeArqTxt) {
         arqBin.seekg(0, ios::beg);
 
         int indiceBloco = 0;
-        while (arqBin.read(reinterpret_cast<char*>(&bloco), sizeof(Bloco))) {
+        bool termina = false;
+        while ((arqBin.read(reinterpret_cast<char*>(&bloco), sizeof(Bloco))) and !termina) {
             arqTxt << "Bloco " << indiceBloco++ << ":\n";
             for (int i = 0; i < bloco.numDados; i++) {
                 const Dado& dado = bloco.dados[i];
@@ -343,13 +264,14 @@ void SequenceSet::saveAllRecordsToTxt(const string& nomeArqTxt) {
                     << dado.regiao << ", " << dado.etnia << ", "
                     << dado.valor << "\n";
             }
-            if (bloco.proxBloco == -1) break; // Último bloco
+            if (bloco.proxBloco == -1) termina = true; // Último bloco
         }
 
         arqTxt.close();
         cout << "Todos os registros foram salvos em " << nomeArqTxt << endl;
 }
 
+//Método para carregar um arquivo .csv ou .txt para o arquivo binário
 void carregarArquivo(const string& nomeArqCsv, SequenceSet& ss, bool txtOrCsv) {
     ifstream arqCsv(nomeArqCsv);
     if (!arqCsv.is_open()) {
@@ -360,10 +282,7 @@ void carregarArquivo(const string& nomeArqCsv, SequenceSet& ss, bool txtOrCsv) {
     string linha;
 
     // Ignorar a primeira linha (cabeçalho) caso o arquivo for .csv
-    if (!txtOrCsv) {
-        getline(arqCsv, linha);
-        cout << "Cabeçalho ignorado: " << linha << endl;
-    }
+    if (!txtOrCsv) getline(arqCsv, linha);
 
     while (getline(arqCsv, linha)) {
         Dado dado = {};
@@ -411,14 +330,15 @@ int main() {
     carregarArquivo("Subnational-period-life-tables-2017-2019-CSV.csv", ss, false);
     int opcao;
     do {
-        cout << "\nMenu:\n";
+        /*cout << "\nMenu:\n";
         cout << "1. Inserir registro via entrada padrão\n";
         cout << "2. Inserir registros via arquivo texto\n";
         cout << "3. Remover registro\n";
         cout << "4. Buscar registro\n";
-        cout << "5. Listar todos os registros\n";
+        cout << "5. Salvar os dados atuais em um arquivo .txt\n";
         cout << "0. Sair\n";
-        cout << "Escolha uma opção: ";
+        cout << "Escolha uma opção: ";*/
+        menu();
         cin >> opcao;
 
         switch (opcao) {
@@ -444,21 +364,24 @@ int main() {
         }
         case 4: {
             string chaveMedida, chaveIdade;
-            //double chaveIdade;
             cout << "Informe a medida para buscar: ";
             cin >> chaveMedida;
             cin.ignore();
             cout << "Informe a idade para buscar: ";
             getline(cin, chaveIdade);
-            //cin >> chaveIdade;
+
             ss.buscarRegistro(chaveMedida, chaveIdade);
             break;
         }
-        case 5:
-            ss.readAllRecords();
+        case 5: {
+            string nomeArqTxt;
+            cout << "Informe o nome do arquivo texto: ";
+            cin >> nomeArqTxt;
+            ss.salvarDadosEmTxt(nomeArqTxt);
             break;
+        }
         case 0:
-            ss.saveAllRecordsToTxt("registros1.txt");
+            ss.salvarDadosEmTxt("registros.txt");
             cout << "Saindo...\n";
             break;
         default:

@@ -5,7 +5,7 @@
         "lib/**/*.jar"
     ],
     "editor.fontFamily": "JetBrains Mono",
-    "editor.fontSize": 16,
+    "editor.fontSize": 12,
     "editor.lineHeight": 1.5,
     //"editor.rulers": [80, 120],
     "workbench.startupEditor": "newUntitledFile",
