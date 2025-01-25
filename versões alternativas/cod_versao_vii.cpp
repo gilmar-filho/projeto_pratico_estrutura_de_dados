@@ -42,6 +42,8 @@ public:
     void saveAllRecordsToTxt(const string &nomeArqTxt);
     void criarPastaBlocos();
     void removerRegistro(const string &chaveMedida, double chaveValor);
+    void buscarRegistro(const string &chaveMedida, const string &chaveIdade, const string &chaveEtnia);
+    void buscarRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn, double valor);
 };
 
 SequenceSet::SequenceSet() : numBlocos(0), priBloco(-1), disBloco(0), contBloco(0) {
@@ -290,6 +292,91 @@ void SequenceSet::removerRegistro(const string &chaveMedida, double chaveValor) 
     cout << "Registro com medida '" << chaveMedida << "' e valor '" << chaveValor << "' não encontrado.\n";
 }
 
+void SequenceSet::buscarRegistro(const string &chaveMedida, const string &chaveIdade, const string &chaveEtnia) {
+    int blocoAtual = 0; // Começa pelo primeiro bloco
+
+    while (blocoAtual != -1) {
+        string nomeBloco = PASTA_BLOCOS + "/" + BASE_NOME_ARQ_BIN + to_string(blocoAtual) + ".bin";
+        ifstream blocoArq(nomeBloco, ios::binary);
+        if (!blocoArq.is_open()) {
+            throw runtime_error("Erro ao abrir o arquivo do bloco: " + nomeBloco);
+        }
+
+        // Lê o cabeçalho do bloco
+        CabecalhoBloco cabecalho;
+        blocoArq.read(reinterpret_cast<char*>(&cabecalho), sizeof(CabecalhoBloco));
+
+        // Procura pelo registro no bloco
+        for (int i = 0; i < cabecalho.numDados; i++) {
+            Dado dado;
+            blocoArq.seekg(sizeof(CabecalhoBloco) + i * sizeof(Dado), ios::beg);
+            blocoArq.read(reinterpret_cast<char*>(&dado), sizeof(Dado));
+
+            // Verifica se os campos coincidem
+            if (strcmp(dado.medida, chaveMedida.c_str()) == 0 &&
+                strcmp(dado.idade, chaveIdade.c_str()) == 0 &&
+                strcmp(dado.etnia, chaveEtnia.c_str()) == 0) {
+                cout << "Registro encontrado no bloco " << blocoAtual << ":\n";
+                cout << "  Medida: " << dado.medida << ", Idade: " << dado.idade
+                     << ", Etnia: " << dado.etnia << ", Valor: " << dado.valor << endl;
+                blocoArq.close();
+                //return;
+            }
+        }
+
+        // Não encontrado neste bloco, vai para o próximo
+        blocoAtual = cabecalho.proxBloco;
+        blocoArq.close();
+    }
+
+    //cout << "Registro não encontrado.\n";
+}
+
+void SequenceSet::buscarRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn, double valor) {
+    int blocoAtual = 0; // Começa pelo primeiro bloco
+
+    while (blocoAtual != -1) {
+        string nomeBloco = PASTA_BLOCOS + "/" + BASE_NOME_ARQ_BIN + to_string(blocoAtual) + ".bin";
+        ifstream blocoArq(nomeBloco, ios::binary);
+        if (!blocoArq.is_open()) {
+            throw runtime_error("Erro ao abrir o arquivo do bloco: " + nomeBloco);
+        }
+
+        // Lê o cabeçalho do bloco
+        CabecalhoBloco cabecalho;
+        blocoArq.read(reinterpret_cast<char*>(&cabecalho), sizeof(CabecalhoBloco));
+
+        // Procura pelo registro no bloco
+        for (int i = 0; i < cabecalho.numDados; i++) {
+            Dado dado;
+            blocoArq.seekg(sizeof(CabecalhoBloco) + i * sizeof(Dado), ios::beg);
+            blocoArq.read(reinterpret_cast<char*>(&dado), sizeof(Dado));
+
+            // Verifica se os campos coincidem
+            if (strcmp(dado.medida, med.c_str()) == 0 &&
+                strcmp(dado.quantil, quant.c_str()) == 0 &&
+                strcmp(dado.area, ar.c_str()) == 0 &&
+                strcmp(dado.sex, sx.c_str()) == 0 &&
+                strcmp(dado.idade, idd.c_str()) == 0 &&
+                strcmp(dado.regiao, reg.c_str()) == 0 &&
+                strcmp(dado.etnia, etn.c_str()) == 0 &&
+                dado.valor == valor) {
+                cout << "Registro encontrado no bloco " << blocoAtual << ":\n";
+                cout << "  Medida: " << dado.medida << ", Idade: " << dado.idade
+                     << ", Etnia: " << dado.etnia << ", Valor: " << dado.valor << endl;
+                blocoArq.close();
+                //return;
+            }
+        }
+
+        // Não encontrado neste bloco, vai para o próximo
+        blocoAtual = cabecalho.proxBloco;
+        blocoArq.close();
+    }
+
+    //cout << "Registro não encontrado.\n";
+}
+
 void excluirArquivosBinarios(const std::string& pasta) {
     try {
         for (const auto& entry : fs::directory_iterator(pasta)) {
@@ -318,6 +405,11 @@ int main(){
     ss.adicionarRegistro({"px", "250%", "Teste", "Teste", "Teste", "Teste", "Teste", 0.123});
     ss.adicionarRegistro({"tx", "250%", "Teste", "Teste", "Teste", "Teste", "Teste", 0.456});
     ss.adicionarRegistro({"yx", "250%", "Teste", "Teste", "Teste", "Teste", "Teste", 0.789});
+
+    //ss.buscarRegistro("px", "80-84 years", "Total");
+    //ss.buscarRegistro("px", "Teste", "Teste");
+    //ss.buscarRegistro("px", "2.50%", "07 Taranaki region", "Female", "80-84 years", "Regional council", "Total", 0.73948);
+    ss.buscarRegistro("px", "250%", "Teste", "Teste", "Teste", "Teste", "Teste", 0.123);
 
     ss.saveAllRecordsToTxt("registros_teste.txt");
     
