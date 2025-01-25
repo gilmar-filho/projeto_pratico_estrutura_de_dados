@@ -11,7 +11,7 @@ using namespace std;
 namespace fs = std::filesystem;
 
 // Construtor da classe SequenceSet
-SequenceSet::SequenceSet() : numBlocos(0), disBloco(0), contBloco(0) {
+SequenceSet::SequenceSet() : numBlocos(0), disBloco(0) {
     criarPastaBlocos();
 }
 
@@ -214,8 +214,122 @@ void SequenceSet::salvarEmTxt(const string &nomeArqTxt) {
     cout << "Todos os registros foram salvos em " << nomeArqTxt << endl;
 }
 
-// Remove um registro do Sequence Set
-void SequenceSet::removerRegistro(const string &chaveMedida, double chaveValor) {
+// Remove (ou não) todos os registros com as chaves informadas
+void SequenceSet::removerRegistro(const string &chaveMedida, const string &chaveIdade, const string &chaveEtnia) {
+    int blocoAtual = 0; // Começa pelo primeiro bloco
+    int contador = 0;
+
+    while (blocoAtual != -1) {
+        string nomeBloco = PASTA_BLOCOS + "/" + BASE_NOME_ARQ_BIN + to_string(blocoAtual) + ".bin";
+        fstream blocoArq(nomeBloco, ios::in | ios::out | ios::binary);
+        if (!blocoArq.is_open()) {
+            throw runtime_error("Erro ao abrir o arquivo do bloco: " + nomeBloco);
+        }
+
+        // Lê o cabeçalho do bloco
+        CabecalhoBloco cabecalho;
+        blocoArq.read(reinterpret_cast<char*>(&cabecalho), sizeof(CabecalhoBloco));
+
+        // Procura pelo registro no bloco
+        for (int i = 0; i < cabecalho.numDados; i++) {
+            Dado dado;
+            blocoArq.seekg(sizeof(CabecalhoBloco) + i * sizeof(Dado), ios::beg);
+            blocoArq.read(reinterpret_cast<char*>(&dado), sizeof(Dado));
+
+            if ((strcmp(dado.medida, chaveMedida.c_str()) == 0) &&
+                (strcmp(dado.idade, chaveIdade.c_str()) == 0) &&
+                (strcmp(dado.etnia, chaveEtnia.c_str())) == 0)
+                contador++;
+        }
+
+        // Não encontrado neste bloco, vai para o próximo
+        blocoAtual = cabecalho.proxBloco;
+        blocoArq.close();
+    }
+
+    if (contador > 0){
+        int cont = 0;
+        cout << contador << " registros foram encontrados\n"
+            << "Deseja removê-los?: (s/n) ";
+        char yesNo;
+        cin >> yesNo;
+        switch (yesNo){
+        case 's': {
+            bool todosRemovidos = false;
+            while (!todosRemovidos) {
+                blocoAtual = 0; // Começa pelo primeiro bloco
+                while (blocoAtual != -1) {
+                    string nomeBloco = PASTA_BLOCOS + "/" + BASE_NOME_ARQ_BIN + to_string(blocoAtual) + ".bin";
+                    fstream blocoArq(nomeBloco, ios::in | ios::out | ios::binary);
+                    if (!blocoArq.is_open()) {
+                        throw runtime_error("Erro ao abrir o arquivo do bloco: " + nomeBloco);
+                    }
+
+                    // Lê o cabeçalho do bloco
+                    CabecalhoBloco cabecalho;
+                    blocoArq.read(reinterpret_cast<char*>(&cabecalho), sizeof(CabecalhoBloco));
+
+                    //int contador = 0;
+                    // Procura pelo registro no bloco
+                    for (int i = 0; i < cabecalho.numDados; i++) {
+                        Dado dado;
+                        blocoArq.seekg(sizeof(CabecalhoBloco) + i * sizeof(Dado), ios::beg);
+                        blocoArq.read(reinterpret_cast<char*>(&dado), sizeof(Dado));
+
+                        if ((strcmp(dado.medida, chaveMedida.c_str()) == 0) &&
+                            (strcmp(dado.idade, chaveIdade.c_str()) == 0) &&
+                            (strcmp(dado.etnia, chaveEtnia.c_str())) == 0) {
+                            cont++;
+                            // Registro encontrado. Realiza a remoção lógica.
+                            // Sobrescreve o registro removido com o último registro do bloco
+                            if (i != cabecalho.numDados - 1) {
+                                blocoArq.seekg(sizeof(CabecalhoBloco) + (cabecalho.numDados - 1) * sizeof(Dado), ios::beg);
+                                Dado ultimoDado;
+                                blocoArq.read(reinterpret_cast<char*>(&ultimoDado), sizeof(Dado));
+
+                                blocoArq.seekp(sizeof(CabecalhoBloco) + i * sizeof(Dado), ios::beg);
+                                blocoArq.write(reinterpret_cast<char*>(&ultimoDado), sizeof(Dado));
+                            }
+
+                            // Atualiza o cabeçalho do bloco
+                            cabecalho.numDados--;
+                            
+                            blocoArq.seekp(0, ios::beg);
+                            blocoArq.write(reinterpret_cast<char*>(&cabecalho), sizeof(CabecalhoBloco));
+
+                            // Atualiza o cabeçalho geral para indicar que este bloco agora tem espaço disponível
+                            disBloco = blocoAtual;
+
+                            cout << "Registro removido com sucesso.\n";
+                        }
+                    }
+
+                    // Não encontrado neste bloco, vai para o próximo
+                    blocoAtual = cabecalho.proxBloco;
+                    blocoArq.close();
+                }
+                if (cont == contador) todosRemovidos = true;
+            }
+            
+            cout << cont << '/' << contador << " registros removidos.\n";
+            break;
+        }
+        case 'n': {
+            cout << "Operação cancelada.\n";
+            break;
+        }
+        default:
+            break;
+        }
+        
+    } else {
+        // Registro não encontrado
+        cout << "Registro com medida '" << chaveMedida << "', idade '" << chaveIdade << "' e etnia '" << chaveEtnia << "' não encontrado.\n";
+    }    
+}
+
+// Remove um registro específico, indicado por todos os campos do registro
+void SequenceSet::removerRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn, double valor) {
     int blocoAtual = 0; // Começa pelo primeiro bloco
 
     while (blocoAtual != -1) {
@@ -235,7 +349,14 @@ void SequenceSet::removerRegistro(const string &chaveMedida, double chaveValor) 
             blocoArq.seekg(sizeof(CabecalhoBloco) + i * sizeof(Dado), ios::beg);
             blocoArq.read(reinterpret_cast<char*>(&dado), sizeof(Dado));
 
-            if ((strcmp(dado.medida, chaveMedida.c_str()) == 0) and (dado.valor == chaveValor)) {
+            if ((strcmp(dado.medida, med.c_str()) == 0) &&
+                (strcmp(dado.quantil, quant.c_str()) == 0) &&
+                (strcmp(dado.area, ar.c_str()) == 0) &&
+                (strcmp(dado.sex, sx.c_str()) == 0) &&
+                (strcmp(dado.idade, idd.c_str()) == 0) &&
+                (strcmp(dado.regiao, reg.c_str()) == 0) &&
+                (strcmp(dado.etnia, etn.c_str()) == 0) &&
+                (dado.valor == valor)) {
                 // Registro encontrado. Realiza a remoção lógica.
                 cout << "Registro encontrado no bloco " << blocoAtual << " e será removido.\n";
 
@@ -271,7 +392,7 @@ void SequenceSet::removerRegistro(const string &chaveMedida, double chaveValor) 
     }
 
     // Registro não encontrado
-    cout << "Registro com medida '" << chaveMedida << "' e valor '" << chaveValor << "' não encontrado.\n";
+    cout << "Registro com medida '" << med << "', idade '" << idd << "' e etnia '" << etn << "' não encontrado.\n";
 }
 
 // Busca um registro pelo campo 'medida', 'idade' e 'etnia'

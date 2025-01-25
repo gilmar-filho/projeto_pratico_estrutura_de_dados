@@ -41,7 +41,8 @@ public:
     void carregarArquivo(const string &nomeArqCsv, bool txtOrCsv);
     void salvarEmTxt(const string &nomeArqTxt);
     void criarPastaBlocos();
-    void removerRegistro(const string &chaveMedida, double chaveValor);
+    void removerRegistro(const string &chaveMedida, const string &chaveIdade, const string &chaveEtnia);
+    void removerRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn, double valor);
     void buscarRegistro(const string &chaveMedida, const string &chaveIdade, const string &chaveEtnia);
     void buscarRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn, double valor);
     void inserirViaEntradaPadrao();

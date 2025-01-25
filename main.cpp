@@ -26,13 +26,59 @@ int main(){
                 break;
             }
             case 3: { // Remoção de dado específico
-                string chaveMedida; 
-                double chaveValor;
-                cout << "Informe a medida para remover: ";
-                cin >> chaveMedida;
-                cout << "Informe o valor para remover: ";
-                cin >> chaveValor;
-                ss.removerRegistro(chaveMedida, chaveValor);
+                int tipoRemocao;
+                cout << "   1. Remoção por medida, idade e etnia\n";
+                cout << "   2. Remoção por todos os campos\n";
+                cout << "   Escolha uma opção: ";
+                cin >> tipoRemocao;
+
+                if (tipoRemocao == 1){
+                    string chaveMedida, chaveIdade, chaveEtnia;
+                    cout << "Informe a medida: ";
+                    cin >> chaveMedida;
+
+                    cout << "Informe a idade: ";
+                    cin.ignore();
+                    getline(cin, chaveIdade);
+
+                    cout << "Informe a etnia: ";
+                    cin >> chaveEtnia;
+                    
+                    ss.removerRegistro(chaveMedida, chaveIdade, chaveEtnia);
+                } else if (tipoRemocao == 2){
+                    string chaveMedida, chaveQuantil, chaveArea, chaveSexo, chaveIdade, chaveRegiao, chaveEtnia;
+                    double chaveValor;
+                    cout << "Informe a medida para remover: ";
+                    cin >> chaveMedida;
+
+                    cout << "Informe o quantil para remover: ";
+                    cin >> chaveQuantil;
+                    
+                    cout << "Informe a área para remover: ";
+                    cin.ignore();
+                    getline(cin, chaveArea);
+
+                    cout << "Informe o sexo para remover: ";
+                    cin >> chaveSexo;
+
+                    cout << "Informe a idade para remover: ";
+                    cin.ignore();
+                    getline(cin, chaveIdade);
+
+                    cout << "Informe a região para remover: ";
+                    getline(cin, chaveRegiao);
+
+                    cout << "Informe a etnia para remover: ";
+                    cin >> chaveEtnia;
+
+                    cout << "Informe o valor para remover: ";
+                    cin >> chaveValor;
+
+                    ss.removerRegistro(chaveMedida, chaveQuantil, chaveArea, chaveSexo, chaveIdade, chaveRegiao, chaveEtnia, chaveValor);
+                } else {
+                    cout << "Opção inválida!\n";
+                }
+                
                 break;
             }
             case 4: { // Busca de dado
