@@ -2,14 +2,15 @@
 #define FUNCAO_H
 
 #include <iostream>
-#include <fstream>
+#include <fstream> // Adicionando a biblioteca para usar arquivos
 #include <string>  // Adicionando a biblioteca para usar string
 using namespace std;
 
-const int TAM_BLOCO = 500;
-const string BASE_NOME_ARQ_BIN = "bloco_";
-const string PASTA_BLOCOS = "blocos";
+const int TAM_BLOCO = 500; // Tamanho máximo de registros por bloco
+const string BASE_NOME_ARQ_BIN = "bloco_"; // Nome base dos arquivos binários
+const string PASTA_BLOCOS = "blocos"; // Pasta para armazenar os arquivos binários
 
+// Estrutura para armazenar os dados
 struct Dado {
     char medida[10];
     char quantil[15];
@@ -21,16 +22,17 @@ struct Dado {
     double valor;
 };
 
+// Estrutura do cabeçalho do bloco
 struct CabecalhoBloco {
     int numDados;    // Quantidade de registros no bloco
     int proxBloco;   // Próximo bloco da sequência (-1 se não houver)
 };
 
+// Classe para manipulação do Sequence Set
 class SequenceSet {
 private:
     int numBlocos;   // Número total de blocos
     int disBloco;    // Próximo bloco disponível
-    int contBloco;
 public:
     SequenceSet();
     ~SequenceSet();
@@ -45,6 +47,6 @@ public:
     void inserirViaEntradaPadrao();
 };
 
-void menu();
+void menu(); // Função para exibir o menu
 
 #endif

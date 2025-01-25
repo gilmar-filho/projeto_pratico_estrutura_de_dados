@@ -1,7 +1,8 @@
 #include <iostream>
-#include "data.h"
+#include "data.h" // Incluindo o arquivo de cabeçalho da classe SequenceSet
 using namespace std;
 
+// Função para exibir o menu
 void menu(){
     cout << "\nMenu:\n";
         cout << "1. Inserir registro via entrada padrão\n";
