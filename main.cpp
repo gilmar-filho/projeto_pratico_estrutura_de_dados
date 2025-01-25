@@ -5,27 +5,27 @@
 using namespace std;
 
 int main(){
-    SequenceSet ss;
     try {
+        // Instancia um objeto da classe SequenceSet e carreda o .csv
         SequenceSet ss;
         ss.carregarArquivo("Subnational-period-life-tables-2017-2019-CSV.csv", false);
         int opcao;
-        do {
+        do { // Menu de opções
             menu();
             cin >> opcao;
 
             switch (opcao) {
-            case 1:
+            case 1: //Inserção via entrada padrão
                 ss.inserirViaEntradaPadrao();
                 break;
-            case 2: {
+            case 2: { // Inserção via arquivo texto
                 string nomeArqTxt;
                 cout << "Informe o nome do arquivo texto: ";
                 cin >> nomeArqTxt;
                 ss.carregarArquivo(nomeArqTxt,true);
                 break;
             }
-            case 3: {
+            case 3: { // Remoção de dado específico
                 string chaveMedida; 
                 double chaveValor;
                 cout << "Informe a medida para remover: ";
@@ -35,27 +35,71 @@ int main(){
                 ss.removerRegistro(chaveMedida, chaveValor);
                 break;
             }
-            case 4: {
-                string chaveMedida, chaveIdade, chaveEtnia;
-                cout << "Informe a medida para buscar: ";
-                cin >> chaveMedida;
-                cin.ignore();
-                cout << "Informe a idade para buscar: ";
-                getline(cin, chaveIdade);
-                cout << "Informe a etnia para buscar: ";
-                cin >> chaveEtnia;
+            case 4: { // Busca de dado
+                int tipoBusca;
+                cout << "   1. Busca por medida, idade e etnia\n";
+                cout << "   2. Busca por todos os campos\n";
+                cout << "   Escolha uma opção: ";
+                cin >> tipoBusca;
+                
+                if (tipoBusca == 1){ // Busca apenas por medida, idade e etnia
+                    string chaveMedida, chaveIdade, chaveEtnia;
+                    cout << "Informe a medida para buscar: ";
+                    cin >> chaveMedida;
 
-                ss.buscarRegistro(chaveMedida, chaveIdade, chaveEtnia);
-                break;
+                    cout << "Informe a idade para buscar: ";
+                    cin.ignore();
+                    getline(cin, chaveIdade);
+
+                    cout << "Informe a etnia para buscar: ";
+                    cin >> chaveEtnia;
+                    
+                    ss.buscarRegistro(chaveMedida, chaveIdade, chaveEtnia);
+                    break;
+                } else if (tipoBusca == 2){ // Busca por todos os campos
+                    string chaveMedida, chaveQuantil, chaveArea, chaveSexo, chaveIdade, chaveRegiao, chaveEtnia;
+                    double chaveValor;
+                    cout << "Informe a medida para buscar: ";
+                    cin >> chaveMedida;
+
+                    cout << "Informe o quantil para buscar: ";
+                    cin >> chaveQuantil;
+                    
+                    cout << "Informe a área para buscar: ";
+                    cin.ignore();
+                    getline(cin, chaveArea);
+
+                    cout << "Informe o sexo para buscar: ";
+                    cin >> chaveSexo;
+
+                    cout << "Informe a idade para buscar: ";
+                    cin.ignore();
+                    getline(cin, chaveIdade);
+
+                    cout << "Informe a região para buscar: ";
+                    getline(cin, chaveRegiao);
+
+                    cout << "Informe a etnia para buscar: ";
+                    cin >> chaveEtnia;
+
+                    cout << "Informe o valor para buscar: ";
+                    cin >> chaveValor;
+
+                    ss.buscarRegistro(chaveMedida, chaveQuantil, chaveArea, chaveSexo, chaveIdade, chaveRegiao, chaveEtnia, chaveValor);
+                    break;
+                } else { //Opção inválida
+                    cout << "Opção inválida!\n";
+                    break;
+                }
             }
-            case 5: {
+            case 5: { // Salvar os dados atuais em um arquivo .txt
                 string nomeArqTxt;
                 cout << "Informe o nome do arquivo texto: ";
                 cin >> nomeArqTxt;
                 ss.salvarEmTxt(nomeArqTxt);
                 break;
             }
-            case 0:
+            case 0: // Sair
                 ss.salvarEmTxt("registros.txt");
                 cout << "Saindo...\n";
                 break;
@@ -63,7 +107,7 @@ int main(){
                 cout << "Opção inválida!\n";
             }
         } while (opcao != 0);
-    } catch (const exception &e) {
+    } catch (const exception &e) { // Tratamento de exceção
         cerr << "Erro: " << e.what() << endl;
     }
     /*ss.removerRegistro("px", 0.57022);

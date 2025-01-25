@@ -297,9 +297,8 @@ void SequenceSet::buscarRegistro(const string &chaveMedida, const string &chaveI
                 cout << "Registro encontrado no bloco " << blocoAtual << ":\n";
                 cout << "  Medida: " << dado.medida << ", Idade: " << dado.idade
                      << ", Etnia: " << dado.etnia << ", Valor: " << dado.valor << endl;
-                blocoArq.close();
+
                 encontrado = true;
-                //return;
             }
         }
 
@@ -333,20 +332,19 @@ void SequenceSet::buscarRegistro(const string &med, const string &quant, const s
             blocoArq.read(reinterpret_cast<char*>(&dado), sizeof(Dado));
 
             // Verifica se os campos coincidem
-            if (strcmp(dado.medida, med.c_str()) == 0 &&
-                strcmp(dado.quantil, quant.c_str()) == 0 &&
-                strcmp(dado.area, ar.c_str()) == 0 &&
-                strcmp(dado.sex, sx.c_str()) == 0 &&
-                strcmp(dado.idade, idd.c_str()) == 0 &&
-                strcmp(dado.regiao, reg.c_str()) == 0 &&
-                strcmp(dado.etnia, etn.c_str()) == 0 &&
-                dado.valor == valor) {
+            if ((strcmp(dado.medida, med.c_str()) == 0) &&
+                (strcmp(dado.quantil, quant.c_str()) == 0) &&
+                (strcmp(dado.area, ar.c_str()) == 0) &&
+                (strcmp(dado.sex, sx.c_str()) == 0) &&
+                (strcmp(dado.idade, idd.c_str()) == 0) &&
+                (strcmp(dado.regiao, reg.c_str()) == 0) &&
+                (strcmp(dado.etnia, etn.c_str()) == 0) &&
+                (dado.valor == valor)) {
                 cout << "Registro encontrado no bloco " << blocoAtual << ":\n";
                 cout << "  Medida: " << dado.medida << ", Idade: " << dado.idade
                      << ", Etnia: " << dado.etnia << ", Valor: " << dado.valor << endl;
-                blocoArq.close();
+                
                 encontrado = true;
-                //return;
             }
         }
 
