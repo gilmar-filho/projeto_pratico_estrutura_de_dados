@@ -214,6 +214,48 @@ void SequenceSet::salvarEmTxt(const string &nomeArqTxt) {
     cout << "\n ### Todos os registros foram salvos em " << nomeArqTxt << "! ###" <<endl;
 }
 
+//Salva os registros em um arquivo CSV
+void SequenceSet::salvarEmCsv(const string &nomeArqCsv) {
+    ofstream arqCsv(nomeArqCsv);
+    if (!arqCsv.is_open()) {
+        throw runtime_error("\n ### Erro ao criar o arquivo CSV: " + nomeArqCsv + "! ###\n");
+    }
+
+    int indiceBloco = 0; // Começa pelo primeiro bloco
+
+    // Cabeçalho do arquivo CSV
+    arqCsv << "Bloco,Registro,Medida,Quantil,Area,Sexo,Idade,Regiao,Etnia,Valor\n";
+
+    while (indiceBloco < numBlocos) {
+        string nomeBloco = PASTA_BLOCOS + "/" + BASE_NOME_ARQ_BIN + to_string(indiceBloco) + ".bin";
+        ifstream blocoArq(nomeBloco, ios::binary);
+        if (!blocoArq.is_open()) {
+            throw runtime_error("\n ### Erro ao abrir o arquivo do bloco: " + nomeBloco + "! ###\n");
+        }
+
+        CabecalhoBloco cabecalho;
+        blocoArq.read(reinterpret_cast<char*>(&cabecalho), sizeof(CabecalhoBloco));
+
+        for (int i = 0; i < cabecalho.numDados; i++) {
+            Dado dado;
+            blocoArq.read(reinterpret_cast<char*>(&dado), sizeof(Dado));
+            
+            // Formata os dados como linha CSV
+            arqCsv << indiceBloco << "," << i + 1 << ","
+                   << dado.medida << "," << dado.quantil << "," 
+                   << dado.area << "," << dado.sex << "," 
+                   << dado.idade << "," << dado.regiao << "," 
+                   << dado.etnia << "," << dado.valor << "\n";
+        }
+
+        blocoArq.close();
+        indiceBloco++;
+    }
+
+    arqCsv.close();
+    cout << "\n ### Todos os registros foram salvos em " << nomeArqCsv << " no formato CSV! ###" << endl;
+}
+
 // Remove (ou não) todos os registros com as chaves informadas
 void SequenceSet::removerRegistro(const string &chaveMedida, const string &chaveIdade, const string &chaveEtnia) {
     int blocoAtual = 0; // Começa pelo primeiro bloco
@@ -539,45 +581,4 @@ void SequenceSet::inserirViaEntradaPadrao() {
 
     adicionarRegistro(dado);
     cout << "\n ### Registro inserido com sucesso! ###\n";
-}
-
-void SequenceSet::salvarEmCsv(const string &nomeArqCsv) {
-    ofstream arqCsv(nomeArqCsv);
-    if (!arqCsv.is_open()) {
-        throw runtime_error("\n ### Erro ao criar o arquivo CSV: " + nomeArqCsv + "! ###\n");
-    }
-
-    int indiceBloco = 0; // Começa pelo primeiro bloco
-
-    // Cabeçalho do arquivo CSV
-    arqCsv << "Bloco,Registro,Medida,Quantil,Area,Sexo,Idade,Regiao,Etnia,Valor\n";
-
-    while (indiceBloco < numBlocos) {
-        string nomeBloco = PASTA_BLOCOS + "/" + BASE_NOME_ARQ_BIN + to_string(indiceBloco) + ".bin";
-        ifstream blocoArq(nomeBloco, ios::binary);
-        if (!blocoArq.is_open()) {
-            throw runtime_error("\n ### Erro ao abrir o arquivo do bloco: " + nomeBloco + "! ###\n");
-        }
-
-        CabecalhoBloco cabecalho;
-        blocoArq.read(reinterpret_cast<char*>(&cabecalho), sizeof(CabecalhoBloco));
-
-        for (int i = 0; i < cabecalho.numDados; i++) {
-            Dado dado;
-            blocoArq.read(reinterpret_cast<char*>(&dado), sizeof(Dado));
-            
-            // Formata os dados como linha CSV
-            arqCsv << indiceBloco << "," << i + 1 << ","
-                   << dado.medida << "," << dado.quantil << "," 
-                   << dado.area << "," << dado.sex << "," 
-                   << dado.idade << "," << dado.regiao << "," 
-                   << dado.etnia << "," << dado.valor << "\n";
-        }
-
-        blocoArq.close();
-        indiceBloco++;
-    }
-
-    arqCsv.close();
-    cout << "\n ### Todos os registros foram salvos em " << nomeArqCsv << " no formato CSV! ###" << endl;
 }

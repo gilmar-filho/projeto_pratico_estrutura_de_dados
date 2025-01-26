@@ -14,7 +14,6 @@ int main(){
         do { // Menu de opções
             menu();
             cin >> opcao;
-
             switch (opcao) {
             case '1': //Inserção via entrada padrão
                 system("clear");
@@ -162,7 +161,7 @@ int main(){
             }
             case '0': // Sair
                 char yesNo;
-                cout << "\n» Desejar realemente sair? *Todas as alterações não salvas serão descartadas* (s/n): ";
+                cout << "\n» Desejar realmente sair? *Todas as alterações não salvas serão descartadas* (s/n): ";
                 cin >> yesNo;
                 if (yesNo == 's') {
                     ss.salvarEmTxt("registros.txt");
@@ -188,21 +187,6 @@ int main(){
     } catch (const exception &e) { // Tratamento de exceção
         cerr << "Erro: " << e.what() << endl;
     }
-    /*ss.removerRegistro("px", 0.57022);
-    ss.removerRegistro("px", 0.99402);
-
-    ss.carregarArquivo("registros.txt", true);
-    
-    ss.adicionarRegistro({"px", "250%", "Teste", "Teste", "Teste", "Teste", "Teste", 0.123});
-    ss.adicionarRegistro({"tx", "250%", "Teste", "Teste", "Teste", "Teste", "Teste", 0.456});
-    ss.adicionarRegistro({"yx", "250%", "Teste", "Teste", "Teste", "Teste", "Teste", 0.789});
-
-    //ss.buscarRegistro("px", "80-84 years", "Total");
-    //ss.buscarRegistro("px", "Teste", "Teste");
-    //ss.buscarRegistro("px", "2.50%", "07 Taranaki region", "Female", "80-84 years", "Regional council", "Total", 0.73948);
-    ss.buscarRegistro("px", "250%", "Teste", "Teste", "Teste", "Teste", "Teste", 0.1223);
-
-    ss.saveAllRecordsToTxt("registros_teste.txt");*/
     
     return 0;
 }

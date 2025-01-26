@@ -40,13 +40,13 @@ public:
     void adicionarRegistro(const Dado &dado);
     void carregarArquivo(const string &nomeArqCsv, bool txtOrCsv);
     void salvarEmTxt(const string &nomeArqTxt);
+    void salvarEmCsv(const string &nomeArqCsv);
     void criarPastaBlocos();
     void removerRegistro(const string &chaveMedida, const string &chaveIdade, const string &chaveEtnia);
     void removerRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn);
     void buscarRegistro(const string &chaveMedida, const string &chaveIdade, const string &chaveEtnia);
     void buscarRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn);
     void inserirViaEntradaPadrao();
-    void salvarEmCsv(const string &nomeArqCsv);
 };
 
 void exibirTabela(Dado dado, bool encontrou); // Função para exibir a tabela
