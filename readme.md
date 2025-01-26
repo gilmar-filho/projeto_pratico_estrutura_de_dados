@@ -1,4 +1,4 @@
-# Projeto Estrutura de Dados - Sequence Set #
+## Projeto Estrutura de Dados - Sequence Set ##
 
 #### Integrantes ####
 - Este projeto foi desenvolvido pelos alunos:
