@@ -143,14 +143,18 @@ int main(){
                     cin.ignore();
                     getline(cin, nomeArqTxt);
                     ss.salvarEmTxt(nomeArqTxt + ".txt");
-                break;
-                } else if (opcaoArq == 2){ {
+                    break;
+                } else if (opcaoArq == 2){
                     string nomeArqCsv;
                     system("clear");
                     layoutSalvarEmTxt();
                     cin.ignore();
                     getline(cin, nomeArqCsv);
                     ss.salvarEmTxt(nomeArqCsv + ".csv");
+                    break;
+                } else {
+                    cout << "\n ### Opção inválida! ###\n";
+                    break;
                 }
                 
             }
