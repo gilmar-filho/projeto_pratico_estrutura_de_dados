@@ -17,7 +17,7 @@ SequenceSet::SequenceSet() : numBlocos(0), disBloco(0) {
 
 // Destrutor da classe SequenceSet
 SequenceSet::~SequenceSet() {
-    cout << "Destruindo SequenceSet..." << endl;
+    cout << "\n» Destruindo SequenceSet...\n" << endl;
     // Limpa a pasta de blocos
     try {
         for (const auto& entry : fs::directory_iterator(PASTA_BLOCOS)) {
@@ -27,7 +27,7 @@ SequenceSet::~SequenceSet() {
             }
         }
     } catch (const fs::filesystem_error& e) {
-        std::cerr << "Erro ao acessar a pasta: " << e.what() << std::endl;
+        std::cerr << "\n ### Erro ao acessar a pasta: " << e.what() << "! ###" << std::endl;
     }
 }
 
@@ -44,7 +44,7 @@ void SequenceSet::criarNovoBloco(int &indiceBloco) {
 
     ofstream blocoArq(nomeBloco, ios::binary);
     if (!blocoArq.is_open()) {
-        throw runtime_error("Erro ao criar o arquivo do bloco: " + nomeBloco);
+        throw runtime_error("\n ### Erro ao criar o arquivo do bloco: " + nomeBloco + "! ###");
     }
 
     // Inicializa o cabeçalho do bloco
@@ -64,7 +64,7 @@ void SequenceSet::adicionarRegistro(const Dado &dado) {
     string nomeBloco = PASTA_BLOCOS + "/" + BASE_NOME_ARQ_BIN + to_string(disBloco) + ".bin";
     fstream blocoArq(nomeBloco, ios::in | ios::out | ios::binary);
     if (!blocoArq.is_open()) {
-        throw runtime_error("Erro ao abrir o arquivo do bloco: " + nomeBloco);
+        throw runtime_error("\n ### Erro ao abrir o arquivo do bloco: " + nomeBloco + "! ###\n");
     }
 
     // Lê o cabeçalho do bloco
@@ -100,7 +100,7 @@ void SequenceSet::adicionarRegistro(const Dado &dado) {
                 string nomeBloco = PASTA_BLOCOS + "/" + BASE_NOME_ARQ_BIN + to_string(i) + ".bin";
                 fstream blocoArq(nomeBloco, ios::in | ios::out | ios::binary);
                 if (!blocoArq.is_open()) {
-                    throw runtime_error("Erro ao abrir o arquivo do bloco: " + nomeBloco);
+                    throw runtime_error("\n ### Erro ao abrir o arquivo do bloco: " + nomeBloco + "! ###\n");
                 }
 
                 CabecalhoBloco cabecalho;
@@ -126,7 +126,7 @@ void SequenceSet::adicionarRegistro(const Dado &dado) {
 void SequenceSet::carregarArquivo(const string &nomeArqCsv, bool txtOrCsv) {
     ifstream arqCsv(nomeArqCsv);
     if (!arqCsv.is_open()) {
-        cout << "Erro ao abrir o arquivo " << nomeArqCsv << endl;
+        cout << "\n ### Erro ao abrir o arquivo " << nomeArqCsv << "! ###" << endl;
         return;
     }
 
@@ -135,7 +135,7 @@ void SequenceSet::carregarArquivo(const string &nomeArqCsv, bool txtOrCsv) {
     // Ignorar a primeira linha (cabeçalho) caso o arquivo for .csv
     if (!txtOrCsv) getline(arqCsv, linha);
 
-    cout << "Carregando registros..." << endl;
+    cout << "\n» Carregando registros..." << endl;
     while (getline(arqCsv, linha)) {
         Dado dado = {};
         size_t pos = 0;
@@ -160,11 +160,11 @@ void SequenceSet::carregarArquivo(const string &nomeArqCsv, bool txtOrCsv) {
             try {
                 dado.valor = std::stod(linha); // Converte o valor para double
             } catch (const std::invalid_argument&) {
-                cout << "Erro: valor inválido no campo 'value': " << linha << endl;
+                cout << "\n ### Erro: valor inválido no campo 'value': " << linha << "! ###" <<endl;
                 continue;
             }
         } else {
-            cout << "Erro: campo 'value' vazio." << endl;
+            cout << "\n ### Erro: campo 'value' vazio! ###" << endl;
             continue;
         }
 
@@ -172,7 +172,7 @@ void SequenceSet::carregarArquivo(const string &nomeArqCsv, bool txtOrCsv) {
     }
 
     system("clear"); // Limpa a tela
-    cout << "Registros carregados com sucesso." << endl;
+    cout << "\n ### Registros carregados com sucesso! ###" << endl;
 
     arqCsv.close(); // Fecha o arquivo
 }
@@ -181,7 +181,7 @@ void SequenceSet::carregarArquivo(const string &nomeArqCsv, bool txtOrCsv) {
 void SequenceSet::salvarEmTxt(const string &nomeArqTxt) {
     ofstream arqTxt(nomeArqTxt);
     if (!arqTxt.is_open()) {
-        throw runtime_error("Erro ao criar o arquivo TXT: " + nomeArqTxt);
+        throw runtime_error("\n ### Erro ao criar o arquivo TXT: " + nomeArqTxt + "! ###\n");
     }
 
     int indiceBloco = 0; // Começa pelo primeiro bloco
@@ -190,7 +190,7 @@ void SequenceSet::salvarEmTxt(const string &nomeArqTxt) {
         string nomeBloco = PASTA_BLOCOS + "/" + BASE_NOME_ARQ_BIN + to_string(indiceBloco) + ".bin";
         ifstream blocoArq(nomeBloco, ios::binary);
         if (!blocoArq.is_open()) {
-            throw runtime_error("Erro ao abrir o arquivo do bloco: " + nomeBloco);
+            throw runtime_error("\n ### Erro ao abrir o arquivo do bloco: " + nomeBloco + "! ###\n");
         }
 
         CabecalhoBloco cabecalho;
@@ -211,7 +211,7 @@ void SequenceSet::salvarEmTxt(const string &nomeArqTxt) {
     }
 
     arqTxt.close();
-    cout << "Todos os registros foram salvos em " << nomeArqTxt << endl;
+    cout << "\n ### Todos os registros foram salvos em " << nomeArqTxt << "! ###" <<endl;
 }
 
 // Remove (ou não) todos os registros com as chaves informadas
@@ -223,7 +223,7 @@ void SequenceSet::removerRegistro(const string &chaveMedida, const string &chave
         string nomeBloco = PASTA_BLOCOS + "/" + BASE_NOME_ARQ_BIN + to_string(blocoAtual) + ".bin";
         fstream blocoArq(nomeBloco, ios::in | ios::out | ios::binary);
         if (!blocoArq.is_open()) {
-            throw runtime_error("Erro ao abrir o arquivo do bloco: " + nomeBloco);
+            throw runtime_error("\n ### Erro ao abrir o arquivo do bloco: " + nomeBloco + "! ###\n");
         }
 
         // Lê o cabeçalho do bloco
@@ -249,8 +249,8 @@ void SequenceSet::removerRegistro(const string &chaveMedida, const string &chave
 
     if (contador > 0){
         int cont = 0;
-        cout << contador << " registros foram encontrados\n"
-            << "Deseja removê-los?: (s/n) ";
+        cout << "\n ### " << contador << " registros foram encontrados! ###\n"
+             << "\n» Deseja removê-los?: (s/n) ";
         char yesNo;
         cin >> yesNo;
         switch (yesNo){
@@ -262,7 +262,7 @@ void SequenceSet::removerRegistro(const string &chaveMedida, const string &chave
                     string nomeBloco = PASTA_BLOCOS + "/" + BASE_NOME_ARQ_BIN + to_string(blocoAtual) + ".bin";
                     fstream blocoArq(nomeBloco, ios::in | ios::out | ios::binary);
                     if (!blocoArq.is_open()) {
-                        throw runtime_error("Erro ao abrir o arquivo do bloco: " + nomeBloco);
+                        throw runtime_error("\n ### Erro ao abrir o arquivo do bloco: " + nomeBloco + "! ###\n");
                     }
 
                     // Lê o cabeçalho do bloco
@@ -299,8 +299,6 @@ void SequenceSet::removerRegistro(const string &chaveMedida, const string &chave
 
                             // Atualiza o cabeçalho geral para indicar que este bloco agora tem espaço disponível
                             disBloco = blocoAtual;
-
-                            cout << "Registro removido com sucesso.\n";
                         }
                     }
 
@@ -311,11 +309,11 @@ void SequenceSet::removerRegistro(const string &chaveMedida, const string &chave
                 if (cont == contador) todosRemovidos = true;
             }
             
-            cout << cont << '/' << contador << " registros removidos.\n";
+            cout << "\n ### " << cont << '/' << contador << " registros removidos! ###\n";
             break;
         }
         case 'n': {
-            cout << "Operação cancelada.\n";
+            cout << "\n ### Operação cancelada! ###\n";
             break;
         }
         default:
@@ -324,19 +322,20 @@ void SequenceSet::removerRegistro(const string &chaveMedida, const string &chave
         
     } else {
         // Registro não encontrado
-        cout << "Registro com medida '" << chaveMedida << "', idade '" << chaveIdade << "' e etnia '" << chaveEtnia << "' não encontrado.\n";
+        cout << "\n ### Nenhum registro com medida '" << chaveMedida << "', idade '" << chaveIdade << "' e etnia '" << chaveEtnia << "' não encontrado! ###\n";
     }    
 }
 
 // Remove um registro específico, indicado por todos os campos do registro
-void SequenceSet::removerRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn, double valor) {
+void SequenceSet::removerRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn) {
     int blocoAtual = 0; // Começa pelo primeiro bloco
+    bool encontrado = false;
 
     while (blocoAtual != -1) {
         string nomeBloco = PASTA_BLOCOS + "/" + BASE_NOME_ARQ_BIN + to_string(blocoAtual) + ".bin";
         fstream blocoArq(nomeBloco, ios::in | ios::out | ios::binary);
         if (!blocoArq.is_open()) {
-            throw runtime_error("Erro ao abrir o arquivo do bloco: " + nomeBloco);
+            throw runtime_error("\n ### Erro ao abrir o arquivo do bloco: " + nomeBloco + "! ###\n");
         }
 
         // Lê o cabeçalho do bloco
@@ -355,34 +354,52 @@ void SequenceSet::removerRegistro(const string &med, const string &quant, const 
                 (strcmp(dado.sex, sx.c_str()) == 0) &&
                 (strcmp(dado.idade, idd.c_str()) == 0) &&
                 (strcmp(dado.regiao, reg.c_str()) == 0) &&
-                (strcmp(dado.etnia, etn.c_str()) == 0) &&
-                (dado.valor == valor)) {
+                (strcmp(dado.etnia, etn.c_str()) == 0)) {
                 // Registro encontrado. Realiza a remoção lógica.
-                cout << "Registro encontrado no bloco " << blocoAtual << " e será removido.\n";
+                cout << "\n» Registro encontrado no bloco " << blocoAtual << "! Deseja removê-lo? (s/n): ";
+                char yesNo;
+                cin >> yesNo;
 
-                // Sobrescreve o registro removido com o último registro do bloco
-                if (i != cabecalho.numDados - 1) {
-                    blocoArq.seekg(sizeof(CabecalhoBloco) + (cabecalho.numDados - 1) * sizeof(Dado), ios::beg);
-                    Dado ultimoDado;
-                    blocoArq.read(reinterpret_cast<char*>(&ultimoDado), sizeof(Dado));
+                switch (yesNo) {
+                    case 's': {
 
-                    blocoArq.seekp(sizeof(CabecalhoBloco) + i * sizeof(Dado), ios::beg);
-                    blocoArq.write(reinterpret_cast<char*>(&ultimoDado), sizeof(Dado));
+                        // Sobrescreve o registro removido com o último registro do bloco
+                        if (i != cabecalho.numDados - 1) {
+                            blocoArq.seekg(sizeof(CabecalhoBloco) + (cabecalho.numDados - 1) * sizeof(Dado), ios::beg);
+                            Dado ultimoDado;
+                            blocoArq.read(reinterpret_cast<char*>(&ultimoDado), sizeof(Dado));
+
+                            blocoArq.seekp(sizeof(CabecalhoBloco) + i * sizeof(Dado), ios::beg);
+                            blocoArq.write(reinterpret_cast<char*>(&ultimoDado), sizeof(Dado));
+                        }
+                    
+                        // Atualiza o cabeçalho do bloco
+                        cabecalho.numDados--;
+                        
+                        blocoArq.seekp(0, ios::beg);
+                        blocoArq.write(reinterpret_cast<char*>(&cabecalho), sizeof(CabecalhoBloco));
+
+                        blocoArq.close(); // Fecha o arquivo do bloco
+
+                        // Atualiza o cabeçalho geral para indicar que este bloco agora tem espaço disponível
+                        disBloco = blocoAtual;
+
+                        cout << "\n ### Registro removido com sucesso! ###\n";
+                        
+                        return; // Sai após encontrar e remover o registro
+                        break;
+                    }
+
+                    case 'n': {
+                        cout << "\n ### Operação cancelada! ###\n";
+                        break;
+                    }
+
+                    default: {
+                        break;
+                    }
                 }
-
-                // Atualiza o cabeçalho do bloco
-                cabecalho.numDados--;
-                
-                blocoArq.seekp(0, ios::beg);
-                blocoArq.write(reinterpret_cast<char*>(&cabecalho), sizeof(CabecalhoBloco));
-
-                blocoArq.close(); // Fecha o arquivo do bloco
-
-                // Atualiza o cabeçalho geral para indicar que este bloco agora tem espaço disponível
-                disBloco = blocoAtual;
-
-                cout << "Registro removido com sucesso.\n";
-                return; // Sai após encontrar e remover o registro
+                encontrado = true;                
             }
         }
 
@@ -392,19 +409,22 @@ void SequenceSet::removerRegistro(const string &med, const string &quant, const 
     }
 
     // Registro não encontrado
-    cout << "Registro com medida '" << med << "', idade '" << idd << "' e etnia '" << etn << "' não encontrado.\n";
+    if (!encontrado) {
+        cout << "\n ### Nenhum registro encontrado! ###\n";
+    }
 }
 
 // Busca um registro pelo campo 'medida', 'idade' e 'etnia'
 void SequenceSet::buscarRegistro(const string &chaveMedida, const string &chaveIdade, const string &chaveEtnia) {
     int blocoAtual = 0; // Começa pelo primeiro bloco
     bool encontrado = false; // Flag para indicar se o registro foi encontrado
+    int contador = 0; // Contador de registros encontrados
 
     while (blocoAtual != -1) {
         string nomeBloco = PASTA_BLOCOS + "/" + BASE_NOME_ARQ_BIN + to_string(blocoAtual) + ".bin";
         ifstream blocoArq(nomeBloco, ios::binary);
         if (!blocoArq.is_open()) {
-            throw runtime_error("Erro ao abrir o arquivo do bloco: " + nomeBloco);
+            throw runtime_error("\n ### Erro ao abrir o arquivo do bloco: " + nomeBloco + "! ###\n");
         }
 
         // Lê o cabeçalho do bloco
@@ -417,15 +437,15 @@ void SequenceSet::buscarRegistro(const string &chaveMedida, const string &chaveI
             blocoArq.seekg(sizeof(CabecalhoBloco) + i * sizeof(Dado), ios::beg);
             blocoArq.read(reinterpret_cast<char*>(&dado), sizeof(Dado));
 
+
             // Verifica se os campos coincidem
             if (strcmp(dado.medida, chaveMedida.c_str()) == 0 &&
                 strcmp(dado.idade, chaveIdade.c_str()) == 0 &&
                 strcmp(dado.etnia, chaveEtnia.c_str()) == 0) {
-                cout << "Registro encontrado no bloco " << blocoAtual << ":\n";
-                cout << "  Medida: " << dado.medida << ", Idade: " << dado.idade
-                     << ", Etnia: " << dado.etnia << ", Valor: " << dado.valor << endl;
-
+                
+                exibirTabela(dado, encontrado); // Exibe a tabela com os registros encontrados
                 encontrado = true; // Marca como encontrado
+                contador++; // Conta a quantidade de registros encontrados
             }
         }
 
@@ -434,11 +454,15 @@ void SequenceSet::buscarRegistro(const string &chaveMedida, const string &chaveI
         blocoArq.close();
     }
 
-    if (!encontrado) cout << "Nenhum registro encontrado.\n"; // Se não encontrado
+    if (encontrado) {
+        cout << "└────────────────────┴─────────────────────┴─────────────────────┴─────────────────────┴─────────────────────┘\n"; 
+        cout << contador << " registro(s) encontrado(s)\n"; 
+    } else {
+        cout << "\n ### Nenhum registro encontrado! ###\n"; // Se não encontrado
+    }
 }
 
-// Busca um registro por todos os campos
-void SequenceSet::buscarRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn, double valor) {
+void SequenceSet::buscarRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn) {
     int blocoAtual = 0; // Começa pelo primeiro bloco
     bool encontrado = false; // Flag para indicar se o registro foi encontrado
 
@@ -446,7 +470,7 @@ void SequenceSet::buscarRegistro(const string &med, const string &quant, const s
         string nomeBloco = PASTA_BLOCOS + "/" + BASE_NOME_ARQ_BIN + to_string(blocoAtual) + ".bin";
         ifstream blocoArq(nomeBloco, ios::binary);
         if (!blocoArq.is_open()) {
-            throw runtime_error("Erro ao abrir o arquivo do bloco: " + nomeBloco);
+            throw runtime_error("\n ### Erro ao abrir o arquivo do bloco: " + nomeBloco + "! ###\n");
         }
 
         // Lê o cabeçalho do bloco
@@ -466,12 +490,10 @@ void SequenceSet::buscarRegistro(const string &med, const string &quant, const s
                 (strcmp(dado.sex, sx.c_str()) == 0) &&
                 (strcmp(dado.idade, idd.c_str()) == 0) &&
                 (strcmp(dado.regiao, reg.c_str()) == 0) &&
-                (strcmp(dado.etnia, etn.c_str()) == 0) &&
-                (dado.valor == valor)) {
-                cout << "Registro encontrado no bloco " << blocoAtual << ":\n";
-                cout << "  Medida: " << dado.medida << ", Idade: " << dado.idade
-                     << ", Etnia: " << dado.etnia << ", Valor: " << dado.valor << endl;
-                
+                (strcmp(dado.etnia, etn.c_str()) == 0)){
+                cout << "\n» Registro encontrado no bloco " << blocoAtual << ":\n";
+                exibirRegistro(dado); // Exibe o registro encontrado
+
                 encontrado = true; // Marca como encontrado
             }
         }
@@ -481,7 +503,9 @@ void SequenceSet::buscarRegistro(const string &med, const string &quant, const s
         blocoArq.close();
     }
 
-    if (!encontrado) cout << "Nenhum registro encontrado.\n"; // Se não encontrado
+    if (!encontrado) {
+        cout << "\n ### Nenhum registro encontrado! ###\n"; // Se não encontrado
+    }
 }
 
 // Insere um novo registro via entrada padrão
@@ -489,31 +513,30 @@ void SequenceSet::inserirViaEntradaPadrao() {
     cin.ignore();
     Dado dado;
 
-    cout << "Inserir novo registro:\n";
-    cout << "Medida: ";
+    printf("\n%-14s","› Medida: ");
     cin.getline(dado.medida, sizeof(dado.medida));
 
-    cout << "Quantil: ";
+    printf("%-14s","› Quantil: ");
     cin.getline(dado.quantil, sizeof(dado.quantil));
 
-    cout << "Área: ";
+    printf("%-15s","› Área: ");
     cin.getline(dado.area, sizeof(dado.area));
 
-    cout << "Sexo: ";
+    printf("%-14s","› Sexo: ");
     cin.getline(dado.sex, sizeof(dado.sex));
 
-    cout << "Idade: ";
+    printf("%-14s","› Idade: ");
     cin.getline(dado.idade, sizeof(dado.idade));
 
-    cout << "Região: ";
+    printf("%-15s","› Região: ");
     cin.getline(dado.regiao, sizeof(dado.regiao));
 
-    cout << "Etnia: ";
+    printf("%-14s","› Etnia: ");
     cin.getline(dado.etnia, sizeof(dado.etnia));
     
-    cout << "Valor: ";
+    printf("%-14s","› Valor: ");
     cin >> dado.valor;
 
     adicionarRegistro(dado);
-    cout << "Registro inserido com sucesso!\n";
+    cout << "\n ### Registro inserido com sucesso! ###\n";
 }

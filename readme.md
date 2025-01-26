@@ -7,7 +7,7 @@
 
 ## Objetivo:
 
-- Implementar um Sequence Set, uma estrutuda de dados baseada em listas que serve para o gerenciament eficiente de dados.
+- Implementar um Sequence Set, uma estrutuda de dados baseada em listas que serve para o gerenciamento eficiente de dados.
 - O Sequence Set separa os dados em blocos e mantém um registro com as informações necessárias para manipular os mesmos.
 
 ## Implementação:
@@ -20,5 +20,6 @@
     `Busca de um dado específico`: permite que o usuário busque um dado específico na base de dados.
 
 ## Como executar?
-- `Utilize o comando`: g++ -Wall main.cpp sequenceset.cpp interface.cpp -o programa
-- `Depois`: ./programa
+No Terminal:
+- `Utilize o comando`: make
+- `Depois`: make run

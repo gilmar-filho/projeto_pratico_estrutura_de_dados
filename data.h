@@ -42,12 +42,21 @@ public:
     void salvarEmTxt(const string &nomeArqTxt);
     void criarPastaBlocos();
     void removerRegistro(const string &chaveMedida, const string &chaveIdade, const string &chaveEtnia);
-    void removerRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn, double valor);
+    void removerRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn);
     void buscarRegistro(const string &chaveMedida, const string &chaveIdade, const string &chaveEtnia);
-    void buscarRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn, double valor);
+    void buscarRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn);
     void inserirViaEntradaPadrao();
 };
 
+void exibirTabela(Dado dado, bool encontrou); // Função para exibir a tabela
+void exibirRegistro(Dado dado); // Função para exibir um registro
 void menu(); // Função para exibir o menu
+void layoutInsercaoPadrao(); // Função para exibir o layout de inserção padrão
+void layoutInsercaoPorTxt(); // Função para exibir o layout de inserção por arquivo texto
+void layoutRemocao(); // Função para exibir o layout de remoção
+void layoutBusca(); // Função para exibir o layout de busca
+void layoutSalvarEmTxt(); // Função para exibir o layout de salvar em txt
+void layoutSair(); // Função para exibir o layout de sair
+void exibirIntro(); // Função para exibir a introdução
 
 #endif
