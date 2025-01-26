@@ -46,6 +46,7 @@ public:
     void buscarRegistro(const string &chaveMedida, const string &chaveIdade, const string &chaveEtnia);
     void buscarRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn);
     void inserirViaEntradaPadrao();
+    void salvarEmCsv(const string &nomeArqCsv);
 };
 
 void exibirTabela(Dado dado, bool encontrou); // Função para exibir a tabela

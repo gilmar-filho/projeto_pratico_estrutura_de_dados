@@ -133,14 +133,26 @@ int main(){
                     break;
                 }
             }
-            case 5: { // Salvar os dados atuais em um arquivo .txt
-                string nomeArqTxt;
-                system("clear");
-                layoutSalvarEmTxt();
-                cin.ignore();
-                getline(cin, nomeArqTxt);
-                ss.salvarEmTxt(nomeArqTxt + ".txt");
+            case 5: { // Salvar os dados atuais em um arquivo
+                int opcaoArq;
+                cin >> opcaoArq;
+                if (opcaoArq == 1){
+                    string nomeArqTxt;
+                    system("clear");
+                    layoutSalvarEmTxt();
+                    cin.ignore();
+                    getline(cin, nomeArqTxt);
+                    ss.salvarEmTxt(nomeArqTxt + ".txt");
                 break;
+                } else if (opcaoArq == 2){ {
+                    string nomeArqCsv;
+                    system("clear");
+                    layoutSalvarEmTxt();
+                    cin.ignore();
+                    getline(cin, nomeArqCsv);
+                    ss.salvarEmTxt(nomeArqCsv + ".csv");
+                }
+                
             }
             case 0: // Sair
                 ss.salvarEmTxt("registros.txt");

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cstdlib>  // Para usar system e popen
-#include <cmath> // Para usar std::floor
+#include <cmath> // Para usar floor
 #include "data.h" // Incluindo o arquivo de cabeçalho da classe SequenceSet
 using namespace std;
 
@@ -18,7 +18,7 @@ void exibirTabela(Dado dado, bool encontrou) {
     // Impressão condicional do valor (inteiro ou decimal)
     printf("│ %-18s │ %-19s │ %-19s │ %-19s │", dado.medida, dado.quantil, dado.idade, dado.etnia);
 
-    if (std::floor(dado.valor) == dado.valor) {
+    if (floor(dado.valor) == dado.valor) {
         // Valor é inteiro
         printf(" %-19d │\n", static_cast<int>(dado.valor));
     } else {
@@ -46,7 +46,7 @@ void exibirRegistro(Dado dado){
     printf("│ %-10s │ %-60s │\n", "Etnia", dado.etnia);
     cout << "├────────────┼──────────────────────────────────────────────────────────────┤\n";
 
-    if (std::floor(dado.valor) == dado.valor) {
+    if (floor(dado.valor) == dado.valor) {
         // Valor é inteiro
         printf("│ %-10s │ %-60d │\n", "Valor", static_cast<int>(dado.valor));
     } else {
@@ -95,23 +95,6 @@ void exibirIntro() {
     imprimirCentralizado("#==========================================================================#\n");
 
 }
-
-/*
-
-══════════════════════════════════════════════════
-
-SISTEMA DE REGISTRO DE DADOS             
-(Sequence Set)
-
-══════════════════════════════════════════════════
-
-Tabelas de Vida Subnacionais: Taxas de Mortalidade e Expectativa de 
-Vida por Região, Sexo, Idade e Grupo Étnico (2017-2019)
-
-══════════════════════════════════════════════════
-
-*/
-
 
 // Função para exibir o menu
 void menu(){
@@ -205,37 +188,3 @@ void layoutSair(){
          <<   "╚══════════════════════════════════════════════════╝\n"
          <<   "\n» Saindo...";
 }
-
-/*
-
-══════════════════════════════════════════════════
-
-SISTEMA DE REGISTRO DE DADOS             
-(Sequence Set)
-
-══════════════════════════════════════════════════
-
-Tabelas de Vida Subnacionais: Taxas de Mortalidade e Expectativa de 
-Vida por Região, Sexo, Idade e Grupo Étnico (2017-2019)
-
-══════════════════════════════════════════════════
-
-*/
-
-/*
-    string fileName = "Tabelas-de-vida-subnacionais-2017-2019.csv";
-
-    cout << "====================================================\n";
-    cout << "           SISTEMA DE REGISTRO DE DADOS             \n";
-    cout << "                  (Sequence Set)                   \n";
-    cout << "====================================================\n";
-    cout << "Tabelas de Vida Subnacionais: Taxas de Mortalidade e\n";
-    cout << " Expectativa de Vida por Região, Sexo, Idade e Grupo Étnico (2017-2019)\n";
-    cout << "                                                   \n";
-    cout << "               " << fileName << "               \n";
-    cout << "                                                   \n";
-    cout << "====================================================\n";
-    cout << "       Desenvolvido para análise de tabelas        \n";
-    cout << "        de vida subnacionais (2017-2019).          \n";
-    cout << "====================================================\n";
-*/
