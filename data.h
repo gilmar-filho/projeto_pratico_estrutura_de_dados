@@ -56,7 +56,7 @@ void layoutInsercaoPadrao(); // Função para exibir o layout de inserção padr
 void layoutInsercaoPorTxt(); // Função para exibir o layout de inserção por arquivo texto
 void layoutRemocao(); // Função para exibir o layout de remoção
 void layoutBusca(); // Função para exibir o layout de busca
-void layoutSalvarEmTxt(); // Função para exibir o layout de salvar em txt
+void layoutSalvarArquivo(int opcao); // Função para exibir o layout de salvar em txt
 void layoutSair(); // Função para exibir o layout de sair
 void exibirIntro(); // Função para exibir a introdução
 

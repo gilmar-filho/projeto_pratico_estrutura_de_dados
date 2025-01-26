@@ -10,18 +10,18 @@ int main(){
         SequenceSet ss;
         ss.carregarArquivo("Subnational-period-life-tables-2017-2019-CSV.csv", false);
         exibirIntro();
-        int opcao;
+        char opcao;
         do { // Menu de opções
             menu();
             cin >> opcao;
 
             switch (opcao) {
-            case 1: //Inserção via entrada padrão
+            case '1': //Inserção via entrada padrão
                 system("clear");
                 layoutInsercaoPadrao();
                 ss.inserirViaEntradaPadrao();
                 break;
-            case 2: { // Inserção via arquivo texto
+            case '2': { // Inserção via arquivo texto
                 string nomeArqTxt;
                 system("clear");
                 layoutInsercaoPorTxt();
@@ -29,7 +29,7 @@ int main(){
                 ss.carregarArquivo(nomeArqTxt,true);
                 break;
             }
-            case 3: { // Remoção de dado específico
+            case '3': { // Remoção de dado específico
                 int tipoRemocao;
                 system("clear");
                 layoutRemocao();
@@ -81,7 +81,7 @@ int main(){
                 
                 break;
             }
-            case 4: { // Busca de dado
+            case '4': { // Busca de dado
                 int tipoBusca;
                 system("clear");
                 layoutBusca();
@@ -133,13 +133,15 @@ int main(){
                     break;
                 }
             }
-            case 5: { // Salvar os dados atuais em um arquivo
+            case '5': { // Salvar os dados atuais em um arquivo
                 int opcaoArq;
+                system("clear");
+                layoutSalvarArquivo(0);
                 cin >> opcaoArq;
                 if (opcaoArq == 1){
                     string nomeArqTxt;
                     system("clear");
-                    layoutSalvarEmTxt();
+                    layoutSalvarArquivo(opcaoArq);
                     cin.ignore();
                     getline(cin, nomeArqTxt);
                     ss.salvarEmTxt(nomeArqTxt + ".txt");
@@ -147,7 +149,7 @@ int main(){
                 } else if (opcaoArq == 2){
                     string nomeArqCsv;
                     system("clear");
-                    layoutSalvarEmTxt();
+                    layoutSalvarArquivo(opcaoArq);
                     cin.ignore();
                     getline(cin, nomeArqCsv);
                     ss.salvarEmTxt(nomeArqCsv + ".csv");
@@ -158,15 +160,31 @@ int main(){
                 }
                 
             }
-            case 0: // Sair
-                ss.salvarEmTxt("registros.txt");
-                system("clear");
-                layoutSair();
+            case '0': // Sair
+                char yesNo;
+                cout << "\n» Desejar realemente sair? *Todas as alterações não salvas serão descartadas* (s/n): ";
+                cin >> yesNo;
+                if (yesNo == 's') {
+                    ss.salvarEmTxt("registros.txt");
+                    system("clear");
+                    layoutSair();
+                    break;
+                } else if (yesNo == 'n') {
+                    opcao = '$';
+                    system("clear");
+                } else {
+                    system("clear");
+                    cout << "\n ### Opção inválida! ###\n";
+                    opcao = '$';
+                    break;
+                }
+            case '$':
+                exibirIntro();
                 break;
             default:
                 cout << "\n ### Opção inválida! ###\n";
             }
-        } while (opcao != 0);
+        } while (opcao != '0');
     } catch (const exception &e) { // Tratamento de exceção
         cerr << "Erro: " << e.what() << endl;
     }
