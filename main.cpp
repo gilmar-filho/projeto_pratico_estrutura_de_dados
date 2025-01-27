@@ -151,7 +151,7 @@ int main(){
                     layoutSalvarArquivo(opcaoArq);
                     cin.ignore();
                     getline(cin, nomeArqCsv);
-                    ss.salvarEmTxt(nomeArqCsv + ".csv");
+                    ss.salvarEmCsv(nomeArqCsv + ".csv");
                     break;
                 } else {
                     cout << "\n ### Opção inválida! ###\n";
