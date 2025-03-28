@@ -8,7 +8,7 @@ CXXFLAGS = -Wall
 TARGET = app
 
 # Define os arquivos fonte
-SOURCES = main.cpp  interface.cpp   sequenceset.cpp
+SOURCES = main.cpp  interface.cpp   sequencesetL.cpp
 
 # Define os arquivos objeto correspondentes aos arquivos fonte
 OBJECTS = $(SOURCES:.cpp=.o)

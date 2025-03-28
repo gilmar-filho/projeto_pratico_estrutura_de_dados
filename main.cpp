@@ -15,11 +15,11 @@ int main(){
             menu();
             cin >> opcao;
             switch (opcao) {
-            case '1': //Inserção via entrada padrão
+            /*case '1': //Inserção via entrada padrão
                 system("clear");
                 layoutInsercaoPadrao();
                 ss.inserirViaEntradaPadrao();
-                break;
+                break;*/
             case '2': { // Inserção via arquivo texto
                 string nomeArqTxt;
                 system("clear");
@@ -28,7 +28,7 @@ int main(){
                 ss.carregarArquivo(nomeArqTxt,true);
                 break;
             }
-            case '3': { // Remoção de dado específico
+            /*case '3': { // Remoção de dado específico
                 int tipoRemocao;
                 system("clear");
                 layoutRemocao();
@@ -158,9 +158,9 @@ int main(){
                     break;
                 }
                 
-            }
+            }*/
             case '0': // Sair
-                char yesNo;
+                /*char yesNo;
                 cout << "\n» Desejar realmente sair? *Todas as alterações não salvas serão descartadas* (s/n): ";
                 cin >> yesNo;
                 if (yesNo == 's') {
@@ -176,7 +176,8 @@ int main(){
                     cout << "\n ### Opção inválida! ###\n";
                     opcao = '$';
                     break;
-                }
+                }*/
+               break;
             case '$':
                 exibirIntro();
                 break;

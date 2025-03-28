@@ -33,20 +33,32 @@ class SequenceSet {
 private:
     int numBlocos;   // Número total de blocos
     int disBloco;    // Próximo bloco disponível
+    int priSeq;      // Primeira sequência
+    //Dado auxDados[]; // Vetor auxiliar para armazenar os registros do bloco
+    //int auxDadosTam; // Tamanho do vetor auxiliar
+
+    CabecalhoBloco lerCabecalho(fstream &arq);
+    void escreverCabecalho(fstream &arq, CabecalhoBloco& cabecalho);
+    void lerDadosBloco(fstream &arq, Dado* dados, int numDados);
+    void escreverDadosBloco(ofstream &arq, Dado* dados, int numDados);
+    Dado lerUltimoValor(fstream &arq, int numDados);
+    void criarPastaBlocos();
+    int criarNovoBloco();
+    string lerUltimaMedida(fstream &arq, int numDados);
 public:
     SequenceSet();
     ~SequenceSet();
-    void criarNovoBloco(int &indiceBloco);
+    //void criarNovoBloco(int &indiceBloco);
     void adicionarRegistro(const Dado &dado);
     void carregarArquivo(const string &nomeArqCsv, bool txtOrCsv);
     void salvarEmTxt(const string &nomeArqTxt);
-    void salvarEmCsv(const string &nomeArqCsv);
-    void criarPastaBlocos();
-    void removerRegistro(const string &chaveMedida, const string &chaveIdade, const string &chaveEtnia);
-    void removerRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn);
-    void buscarRegistro(const string &chaveMedida, const string &chaveIdade, const string &chaveEtnia);
-    void buscarRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn);
-    void inserirViaEntradaPadrao();
+    //void salvarEmCsv(const string &nomeArqCsv);
+    //void removerRegistro(const string &chaveMedida, const string &chaveIdade, const string &chaveEtnia);
+    //void removerRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn);
+    //void buscarRegistro(const string &chaveMedida, const string &chaveIdade, const string &chaveEtnia);
+    //void buscarRegistro(const string &med, const string &quant, const string &ar, const string &sx, const string &idd, const string &reg, const string &etn);
+    //void inserirViaEntradaPadrao();
+    void shellSort(Dado *dados, int n);
 };
 
 void exibirTabela(Dado dado, bool encontrou); // Função para exibir a tabela
